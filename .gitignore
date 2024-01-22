@@ -33,3 +33,4 @@ build/
 .vscode/
 /src/main/resources/application-ZelRS.properties
 /src/main/resources/application-adhoc.properties
+/src/main/resources/application-myUser.properties
