@@ -1,4 +1,4 @@
-package ru.skypro.homework.filter;
+package crazy_selling_store.filter;
 
 
 import org.springframework.stereotype.Component;

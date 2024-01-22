@@ -1,6 +1,6 @@
-package ru.skypro.homework.service;
+package crazy_selling_store.service;
 
-import ru.skypro.homework.dto.Register;
+import crazy_selling_store.dto.Register;
 
 public interface AuthService {
     boolean login(String userName, String password);

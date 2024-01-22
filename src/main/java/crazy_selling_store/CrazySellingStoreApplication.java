@@ -1,11 +1,11 @@
-package ru.skypro.homework;
+package crazy_selling_store;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class HomeworkApplication {
+public class CrazySellingStoreApplication {
   public static void main(String[] args) {
-    SpringApplication.run(HomeworkApplication.class, args);
+    SpringApplication.run(CrazySellingStoreApplication.class, args);
   }
 }
