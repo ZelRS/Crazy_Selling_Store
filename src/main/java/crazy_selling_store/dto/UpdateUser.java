@@ -1,14 +1,10 @@
 package crazy_selling_store.dto;
 
-import crazy_selling_store.dto.enums.Role;
 import lombok.Data;
 
 @Data
-public class Register {
-    private String username;
-    private String password;
+public class UpdateUser {
     private String firstName;
     private String lastName;
     private String phone;
-    private Role role;
 }
