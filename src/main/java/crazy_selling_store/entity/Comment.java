@@ -5,8 +5,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-@Entity
-@Table(name = "comments")
+@Entity(name = "comments")
 @NoArgsConstructor
 @Data
 public class Comment {
@@ -15,6 +14,7 @@ public class Comment {
     private Integer pk;
     private Long createdAt;
     private String text;
+    @Column(name = "author_image")
     private String authorImage;
 
     @ManyToOne
