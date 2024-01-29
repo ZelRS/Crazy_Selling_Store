@@ -1,12 +1,14 @@
 package crazy_selling_store.dto.security;
 
 import crazy_selling_store.dto.enums.Role;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 @Data
+@AllArgsConstructor
 public class Register {
     @Size(min = 4, max = 32)
     private String username;

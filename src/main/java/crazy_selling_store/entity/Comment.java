@@ -1,17 +1,30 @@
 package crazy_selling_store.entity;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "comments")
+@NoArgsConstructor
+@Data
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer pk;
-    private Integer author;
-    private String authorImage;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User authorId;
     private String authorFirstName;
     private Long createdAt;
     private String text;
+    @Lob
+    private String authorImage;
 
+//    public Comment(String text) {
+//        this.authorImage = this.authorId.getImage();
+//        this.authorFirstName = this.authorId.getFirstName();
+//        this.text = text;
+//    }
 }
