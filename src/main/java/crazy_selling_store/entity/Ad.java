@@ -15,8 +15,8 @@ public class Ad {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User authorId;
-    private String authorFirstName; // ?
-    private String authorLastName; // ?
+    private String authorFirstName; // ? вот это мне кажется лишние строки, так как они уже есть в модели User,
+    private String authorLastName; // ? но при этом их нельзя убирать из DTO. не понимаю как лучше поступить...
     private Integer price;
     private String title;
     private String description;

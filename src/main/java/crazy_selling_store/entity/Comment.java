@@ -16,11 +16,11 @@ public class Comment {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User authorId;
-    private String authorFirstName;
+    private String authorFirstName; // тут та же проблема ,что и в модели Ad. кажется, что поле лишнее... (смотреть модель Ad)
     private Long createdAt;
     private String text;
     @Lob
-    private String authorImage;
+    private String authorImage; // тут та же проблема ,что и в модели Ad. кажется, что поле лишнее... (смотреть модель Ad)
 
 //    public Comment(String text) {
 //        this.authorImage = this.authorId.getImage();
