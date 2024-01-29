@@ -66,8 +66,8 @@ public class CommentController {
     @PatchMapping(value = "/{adId}/comments/{commentId}", produces = APPLICATION_JSON_VALUE)
     @Operation(summary = "Обновление комментария")
     public ResponseEntity<Comment> updateAdComment(@PathVariable("adId") Integer adId,
-                                           @PathVariable("commentId") Integer commentId,
-                                             @RequestBody(required = false) CreateOrUpdateComment createOrUpdateComment) {
+                                                   @PathVariable("commentId") Integer commentId,
+                                                   @RequestBody(required = false) CreateOrUpdateComment createOrUpdateComment) {
         Comment stubObj = new Comment(); /*объект-заглушка*/
         int stub = 10; /*заглушка*/
         if (stub > 10) {

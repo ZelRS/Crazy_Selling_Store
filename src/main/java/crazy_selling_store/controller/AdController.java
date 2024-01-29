@@ -33,7 +33,7 @@ public class AdController {
     @PostMapping(consumes = MULTIPART_FORM_DATA_VALUE, produces = APPLICATION_JSON_VALUE)
     @Operation(summary = "Добавление объявления")
     public ResponseEntity<Ad> createAd(@RequestBody Ad properties,
-                                      @RequestBody MultipartFile image) {
+                                       @RequestBody MultipartFile image) {
         int stub = 10; /*заглушка*/
         if (stub >= 10) {
             return ResponseEntity.status(HttpStatus.CREATED).body(properties);

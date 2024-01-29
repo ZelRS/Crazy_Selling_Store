@@ -1,13 +1,15 @@
-package crazy_selling_store.dto.users;
-
+package crazy_selling_store.entity;
 
 import crazy_selling_store.dto.enums.Role;
-import lombok.Data;
 
-@Data
+import javax.persistence.*;
+
+@Entity
+@Table(name = "users")
 public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
     private String email;
     private String firstName;
     private String lastName;
