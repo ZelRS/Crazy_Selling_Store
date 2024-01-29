@@ -1,8 +1,8 @@
 package crazy_selling_store.controller;
 
 import crazy_selling_store.dto.NewPassword;
-import crazy_selling_store.dto.UpdateUser;
-import crazy_selling_store.dto.User;
+import crazy_selling_store.dto.users.UpdateUser;
+import crazy_selling_store.dto.users.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

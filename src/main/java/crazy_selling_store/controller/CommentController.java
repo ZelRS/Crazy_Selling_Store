@@ -1,8 +1,8 @@
 package crazy_selling_store.controller;
 
-import crazy_selling_store.dto.Comment;
-import crazy_selling_store.dto.Comments;
-import crazy_selling_store.dto.CreateOrUpdateComment;
+import crazy_selling_store.dto.comments.Comment;
+import crazy_selling_store.dto.comments.Comments;
+import crazy_selling_store.dto.comments.CreateOrUpdateComment;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
