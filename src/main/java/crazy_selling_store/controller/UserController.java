@@ -1,6 +1,6 @@
 package crazy_selling_store.controller;
 
-import crazy_selling_store.dto.NewPassword;
+import crazy_selling_store.dto.security.NewPassword;
 import crazy_selling_store.dto.users.UpdateUser;
 import crazy_selling_store.dto.users.User;
 import io.swagger.v3.oas.annotations.Operation;

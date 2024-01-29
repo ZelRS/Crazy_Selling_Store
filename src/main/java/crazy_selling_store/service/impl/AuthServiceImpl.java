@@ -1,6 +1,6 @@
 package crazy_selling_store.service.impl;
 
-import crazy_selling_store.dto.Register;
+import crazy_selling_store.dto.security.Register;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;

@@ -1,4 +1,4 @@
-package crazy_selling_store.dto;
+package crazy_selling_store.dto.security;
 
 import lombok.Data;
 
