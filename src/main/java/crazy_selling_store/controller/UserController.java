@@ -3,6 +3,7 @@ package crazy_selling_store.controller;
 import crazy_selling_store.dto.security.NewPassword;
 import crazy_selling_store.dto.users.UpdateUser;
 import crazy_selling_store.dto.users.User;
+import crazy_selling_store.mapper.UserMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 @RequestMapping("/users")
 @Tag(name = "Пользователи")
 public class UserController {
+    private final UserMapper userMapper;
 
     @PostMapping("/set-password")
     @Operation(summary = "Обновление пароля")

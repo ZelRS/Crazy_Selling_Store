@@ -13,18 +13,11 @@ public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer pk;
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User authorId;
-    private String authorFirstName; // тут та же проблема ,что и в модели Ad. кажется, что поле лишнее... (смотреть модель Ad)
     private Long createdAt;
     private String text;
-    @Lob
-    private String authorImage; // тут та же проблема ,что и в модели Ad. кажется, что поле лишнее... (смотреть модель Ad)
+    private String authorImage;
 
-//    public Comment(String text) {
-//        this.authorImage = this.authorId.getImage();
-//        this.authorFirstName = this.authorId.getFirstName();
-//        this.text = text;
-//    }
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }

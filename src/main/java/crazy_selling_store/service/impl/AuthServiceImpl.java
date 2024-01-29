@@ -42,10 +42,10 @@ public class AuthServiceImpl implements AuthService {
                         .roles(register.getRole().name())
                         .build());
 
-        /////////////////////добавил маппинг полей регистрации в сущность User и сохранил ее в БД//////////////////
-        crazy_selling_store.entity.User mappedUser = UserMapper.INSTANCE.registerToUser(register);
-        userRepository.save(mappedUser);
-        ////////////////////////////////////////////////////////////////////////////////////////////
+//        /////////////////////добавил маппинг полей регистрации в сущность User и сохранил ее в БД//////////////////
+//        crazy_selling_store.entity.User mappedUser = UserMapper.INSTANCE.registerToUser(register);
+//        userRepository.save(mappedUser);
+//        ////////////////////////////////////////////////////////////////////////////////////////////
         return true;
     }
 

@@ -4,6 +4,7 @@ import crazy_selling_store.dto.ads.Ad;
 import crazy_selling_store.dto.ads.Ads;
 import crazy_selling_store.dto.ads.CreateOrUpdateAd;
 import crazy_selling_store.dto.ads.ExtendedAd;
+import crazy_selling_store.mapper.AdMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import static org.springframework.http.MediaType.*;
 @RequestMapping("/ads")
 @Tag(name = "Объявления")
 public class AdController {
+    private final AdMapper adMapper;
 
     @GetMapping(produces = APPLICATION_JSON_VALUE)
     @Operation(summary = "Получение всех объявлений")

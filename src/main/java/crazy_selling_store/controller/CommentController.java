@@ -3,6 +3,7 @@ package crazy_selling_store.controller;
 import crazy_selling_store.dto.comments.Comment;
 import crazy_selling_store.dto.comments.Comments;
 import crazy_selling_store.dto.comments.CreateOrUpdateComment;
+import crazy_selling_store.mapper.CommentMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RequestMapping("/ads")
 @Tag(name = "Комментарии")
 public class CommentController {
+    private final CommentMapper commentMapper;
 
     @GetMapping(value = "/{id}/comments", produces = APPLICATION_JSON_VALUE)
     @Operation(summary = "Получение комментариев объявления")
