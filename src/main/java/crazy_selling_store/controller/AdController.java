@@ -1,9 +1,9 @@
 package crazy_selling_store.controller;
 
-import crazy_selling_store.dto.Ad;
-import crazy_selling_store.dto.Ads;
-import crazy_selling_store.dto.CreateOrUpdateAd;
-import crazy_selling_store.dto.ExtendedAd;
+import crazy_selling_store.dto.ads.Ad;
+import crazy_selling_store.dto.ads.Ads;
+import crazy_selling_store.dto.ads.CreateOrUpdateAd;
+import crazy_selling_store.dto.ads.ExtendedAd;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
