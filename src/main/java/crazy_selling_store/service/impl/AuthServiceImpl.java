@@ -3,12 +3,13 @@ package crazy_selling_store.service.impl;
 import crazy_selling_store.repository.UserRepository;
 import crazy_selling_store.service.AuthService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
@@ -29,7 +30,8 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public boolean register(crazy_selling_store.entity.User user) {
-        if (manager.userExists(user.getEmail())) {
+        if (userRepository.findUserByEmail(user.getEmail()).isPresent()) {
+            log.info("Такой пользователь существует");
             return false;
         }
         manager.createUser(
