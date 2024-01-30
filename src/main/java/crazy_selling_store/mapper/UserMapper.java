@@ -26,7 +26,7 @@ public interface UserMapper {
     @Mapping(source = "currentPassword", target = "password")
     User toEntityUser(crazy_selling_store.dto.security.NewPassword dto);
     @InheritInverseConfiguration
-    @Mapping(source = "password", target = "currentPassword")
+    @Mapping(source = "password", target = "newPassword")
     crazy_selling_store.dto.security.NewPassword toDtoNewPassword(User user);
     @Mapping(source = "username", target = "email")
     User toEntityUser(crazy_selling_store.dto.security.Register dto);
