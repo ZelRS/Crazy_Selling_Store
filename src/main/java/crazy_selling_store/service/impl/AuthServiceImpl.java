@@ -1,7 +1,5 @@
 package crazy_selling_store.service.impl;
 
-import crazy_selling_store.dto.security.Register;
-import crazy_selling_store.mapper.UserMapper;
 import crazy_selling_store.repository.UserRepository;
 import crazy_selling_store.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -30,22 +28,18 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public boolean register(Register register) {
-        if (manager.userExists(register.getUsername())) {
+    public boolean register(crazy_selling_store.entity.User user) {
+        if (manager.userExists(user.getEmail())) {
             return false;
         }
         manager.createUser(
                 User.builder()
                         .passwordEncoder(this.encoder::encode)
-                        .password(register.getPassword())
-                        .username(register.getUsername())
-                        .roles(register.getRole().name())
+                        .password(user.getPassword())
+                        .username(user.getEmail())
+                        .roles(user.getRole().name())
                         .build());
-
-//        /////////////////////добавил маппинг полей регистрации в сущность User и сохранил ее в БД//////////////////
-//        crazy_selling_store.entity.User mappedUser = UserMapper.INSTANCE.registerToUser(register);
-//        userRepository.save(mappedUser);
-//        ////////////////////////////////////////////////////////////////////////////////////////////
+        userRepository.save(user);
         return true;
     }
 

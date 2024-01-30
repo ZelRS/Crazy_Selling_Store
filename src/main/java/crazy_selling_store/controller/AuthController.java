@@ -2,6 +2,7 @@ package crazy_selling_store.controller;
 
 import crazy_selling_store.dto.security.Login;
 import crazy_selling_store.dto.security.Register;
+import crazy_selling_store.mapper.UserMapper;
 import crazy_selling_store.repository.UserRepository;
 import crazy_selling_store.service.AuthService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthService authService;
+    private final UserMapper userMapper;
 
     @PostMapping("/login")
     @Tag(name = "Авторизация")
@@ -39,7 +41,7 @@ public class AuthController {
     @Tag(name = "Регистрация")
     public ResponseEntity<?> register(@RequestBody(required = false) Register register) {
         log.info("поступил запрос на регистрацию");
-        if (authService.register(register)) {
+        if (authService.register(userMapper.toEntityUser(register))) {
             log.info("регистрация прошла успешно");
             return ResponseEntity.status(HttpStatus.CREATED).build();
         } else {
