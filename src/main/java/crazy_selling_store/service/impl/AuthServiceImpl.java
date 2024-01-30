@@ -21,7 +21,8 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public boolean login(String userName, String password) {
-        if (!manager.userExists(userName)) {
+        if (userRepository.findUserByEmail(userName).isEmpty()) {
+            log.info("Такой пользователь отсутствует");
             return false;
         }
         UserDetails userDetails = manager.loadUserByUsername(userName);
