@@ -18,17 +18,19 @@ public interface UserMapper {
     User toEntityUser(crazy_selling_store.dto.users.User dto);
     @InheritInverseConfiguration
     crazy_selling_store.dto.users.User toDtoUser(User user);
-
+    @Mapping(source = "username", target = "email")
     User toEntityUser(crazy_selling_store.dto.security.Login dto);
     @InheritInverseConfiguration
+    @Mapping(source = "email", target = "username")
     crazy_selling_store.dto.security.Login toDtoLogin(User user);
-
+    @Mapping(source = "currentPassword", target = "password")
     User toEntityUser(crazy_selling_store.dto.security.NewPassword dto);
     @InheritInverseConfiguration
+    @Mapping(source = "password", target = "currentPassword")
     crazy_selling_store.dto.security.NewPassword toDtoNewPassword(User user);
     @Mapping(source = "username", target = "email")
     User toEntityUser(crazy_selling_store.dto.security.Register dto);
-    @Mapping(source = "email", target = "username")
     @InheritInverseConfiguration
+    @Mapping(source = "email", target = "username")
     crazy_selling_store.dto.security.Register toDtoRegister(User user);
 }

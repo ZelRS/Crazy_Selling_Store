@@ -28,7 +28,7 @@ public class AuthController {
     @Tag(name = "Авторизация")
     public ResponseEntity<?> login(@RequestBody(required = false) Login login) {
         log.info("поступил запрос на вход от пользователя " + login.getUsername());
-        if (authService.login(login.getUsername(), login.getPassword())) {
+        if (authService.login(userMapper.toEntityUser(login).getEmail(), userMapper.toEntityUser(login).getPassword())) {
             log.info("пользователь " + login.getUsername() + " вошел успешно");
             return ResponseEntity.ok().build();
         } else {
