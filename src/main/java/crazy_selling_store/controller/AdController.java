@@ -4,6 +4,8 @@ import crazy_selling_store.dto.ads.Ad;
 import crazy_selling_store.dto.ads.Ads;
 import crazy_selling_store.dto.ads.CreateOrUpdateAd;
 import crazy_selling_store.dto.ads.ExtendedAd;
+import crazy_selling_store.mapper.AdMapper;
+import crazy_selling_store.repository.AdRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,8 @@ import static org.springframework.http.MediaType.*;
 @RequestMapping("/ads")
 @Tag(name = "Объявления")
 public class AdController {
+    private final AdMapper adMapper;
+    private final AdRepository adRepository;
 
     @GetMapping(produces = APPLICATION_JSON_VALUE)
     @Operation(summary = "Получение всех объявлений")
@@ -32,8 +36,8 @@ public class AdController {
 
     @PostMapping(consumes = MULTIPART_FORM_DATA_VALUE, produces = APPLICATION_JSON_VALUE)
     @Operation(summary = "Добавление объявления")
-    public ResponseEntity<Ad> createAd(@RequestBody Ad properties,
-                                      @RequestBody MultipartFile image) {
+    public ResponseEntity<CreateOrUpdateAd> createAd(@RequestBody CreateOrUpdateAd properties,
+                                       @RequestBody MultipartFile image) {
         int stub = 10; /*заглушка*/
         if (stub >= 10) {
             return ResponseEntity.status(HttpStatus.CREATED).body(properties);

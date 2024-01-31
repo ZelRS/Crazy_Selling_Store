@@ -3,6 +3,7 @@ package crazy_selling_store.controller;
 import crazy_selling_store.dto.comments.Comment;
 import crazy_selling_store.dto.comments.Comments;
 import crazy_selling_store.dto.comments.CreateOrUpdateComment;
+import crazy_selling_store.mapper.CommentMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RequestMapping("/ads")
 @Tag(name = "Комментарии")
 public class CommentController {
+    private final CommentMapper commentMapper;
 
     @GetMapping(value = "/{id}/comments", produces = APPLICATION_JSON_VALUE)
     @Operation(summary = "Получение комментариев объявления")
@@ -66,8 +68,8 @@ public class CommentController {
     @PatchMapping(value = "/{adId}/comments/{commentId}", produces = APPLICATION_JSON_VALUE)
     @Operation(summary = "Обновление комментария")
     public ResponseEntity<Comment> updateAdComment(@PathVariable("adId") Integer adId,
-                                           @PathVariable("commentId") Integer commentId,
-                                             @RequestBody(required = false) CreateOrUpdateComment createOrUpdateComment) {
+                                                   @PathVariable("commentId") Integer commentId,
+                                                   @RequestBody(required = false) CreateOrUpdateComment createOrUpdateComment) {
         Comment stubObj = new Comment(); /*объект-заглушка*/
         int stub = 10; /*заглушка*/
         if (stub > 10) {

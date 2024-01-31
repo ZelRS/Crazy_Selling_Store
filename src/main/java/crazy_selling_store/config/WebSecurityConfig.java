@@ -1,8 +1,10 @@
 package crazy_selling_store.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -14,6 +16,7 @@ import crazy_selling_store.dto.enums.Role;
 import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
+@EnableWebSecurity
 public class WebSecurityConfig {
 
     private static final String[] AUTH_WHITELIST = {
@@ -27,11 +30,11 @@ public class WebSecurityConfig {
 
     @Bean
     public InMemoryUserDetailsManager userDetailsService(PasswordEncoder passwordEncoder) {
+        String encodedPassword = passwordEncoder.encode("password");
         UserDetails user =
                 User.builder()
                         .username("user@gmail.com")
-                        .password("password")
-                        .passwordEncoder(passwordEncoder::encode)
+                        .password(encodedPassword)
                         .roles(Role.USER.name())
                         .build();
         return new InMemoryUserDetailsManager(user);

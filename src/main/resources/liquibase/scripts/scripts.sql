@@ -1,2 +1,1 @@
 -- liquibase formatted sql
-
