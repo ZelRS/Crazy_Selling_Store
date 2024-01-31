@@ -4,8 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 
-@Entity
-@Table(name = "ads")
+@Entity(name = "ads")
 @NoArgsConstructor
 @Data
 public class Ad {
@@ -15,7 +14,6 @@ public class Ad {
     private Integer price;
     private String title;
     private String description;
-    private String email;
     private String image;
 
     @ManyToOne

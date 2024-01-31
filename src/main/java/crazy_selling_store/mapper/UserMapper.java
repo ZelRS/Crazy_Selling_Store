@@ -1,8 +1,10 @@
 package crazy_selling_store.mapper;
 
+import crazy_selling_store.dto.security.Login;
+import crazy_selling_store.dto.security.NewPassword;
+import crazy_selling_store.dto.security.Register;
 import crazy_selling_store.dto.users.UpdateUser;
 import crazy_selling_store.entity.User;
-import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -11,26 +13,36 @@ import org.mapstruct.factory.Mappers;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
-    User toEntityUser(crazy_selling_store.dto.users.UpdateUser dto);
-    @InheritInverseConfiguration
-    crazy_selling_store.dto.users.UpdateUser toDtoUpdateUser(User user);
 
-    User toEntityUser(crazy_selling_store.dto.users.User dto);
-    @InheritInverseConfiguration
-    crazy_selling_store.dto.users.User toDtoUser(User user);
+
+    //-------------------to Entity mappers------------------------------
+//    User toEntityUser(crazy_selling_store.dto.users.User dto); данный маппинг возможно не понадобится
+
+
+    User toEntityUser(UpdateUser dto);
+
+
     @Mapping(source = "username", target = "email")
-    User toEntityUser(crazy_selling_store.dto.security.Login dto);
-    @InheritInverseConfiguration
-    @Mapping(source = "email", target = "username")
-    crazy_selling_store.dto.security.Login toDtoLogin(User user);
+    User toEntityUser(Login dto);
+
     @Mapping(source = "currentPassword", target = "password")
-    User toEntityUser(crazy_selling_store.dto.security.NewPassword dto);
-    @InheritInverseConfiguration
-    @Mapping(source = "password", target = "newPassword")
-    crazy_selling_store.dto.security.NewPassword toDtoNewPassword(User user);
+    User toEntityUser(NewPassword dto);
+
     @Mapping(source = "username", target = "email")
-    User toEntityUser(crazy_selling_store.dto.security.Register dto);
-    @InheritInverseConfiguration
+    User toEntityUser(Register dto);
+
+
+    //----------------------to DTO mappers--------------------------------
+    crazy_selling_store.dto.users.User toDTOUser(User user);
+
+    UpdateUser toDTOUpdateUser(User user);
+
     @Mapping(source = "email", target = "username")
-    crazy_selling_store.dto.security.Register toDtoRegister(User user);
+    Login toDTOLogin(User user);
+
+    @Mapping(source = "password", target = "newPassword")
+    NewPassword toDTONewPassword(User user);
+
+    @Mapping(source = "email", target = "username")
+    Register toDTORegister(User user);
 }

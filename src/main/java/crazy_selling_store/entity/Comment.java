@@ -14,9 +14,6 @@ public class Comment {
     private Integer pk;
     private Long createdAt;
     private String text;
-    @Column(name = "author_image")
-    private String authorImage;
-
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;

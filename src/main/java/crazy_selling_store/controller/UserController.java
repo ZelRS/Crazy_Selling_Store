@@ -70,7 +70,7 @@ public class UserController {
             crazy_selling_store.entity.User user = userRepository.findUserByEmail(loggedInUsername)
                     .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
 
-            User userDTO = userMapper.toDtoUser(user);
+            User userDTO = userMapper.toDTOUser(user);
             return ResponseEntity.ok(userDTO);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -91,7 +91,7 @@ public class UserController {
                     .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
             user = userMapper.toEntityUser(updateUser);
             user = userRepository.save(user);
-            UpdateUser updatedUserDTO = userMapper.toDtoUpdateUser(user);
+            UpdateUser updatedUserDTO = userMapper.toDTOUpdateUser(user);
             return ResponseEntity.ok(updatedUserDTO);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
