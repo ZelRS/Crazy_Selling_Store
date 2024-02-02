@@ -31,7 +31,6 @@ public class AuthServiceImpl implements AuthService {
             log.info("Пароль введен неверно");
             return false;
         }
-//            UserDetails userDetails = manager.loadUserByUsername(userName);
         return true;
     }
 
