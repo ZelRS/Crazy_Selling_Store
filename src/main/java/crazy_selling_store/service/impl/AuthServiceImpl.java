@@ -5,10 +5,12 @@ import crazy_selling_store.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -21,12 +23,16 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public boolean login(String userName, String password) {
-        if (userRepository.findUserByEmail(userName).isEmpty()) {
-            log.info("Такой пользователь отсутствует");
+        Optional<crazy_selling_store.entity.User> user = userRepository.findUserByEmail(userName);
+        if (user.isEmpty()) {
+            log.info("Пользователь " + userName + " отсутствует");
+            return false;
+        } else if (!user.get().getPassword().equals(password)) {
+            log.info("Пароль введен неверно");
             return false;
         }
-        UserDetails userDetails = manager.loadUserByUsername(userName);
-        return encoder.matches(password, userDetails.getPassword());
+//            UserDetails userDetails = manager.loadUserByUsername(userName);
+        return true;
     }
 
     @Override

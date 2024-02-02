@@ -30,7 +30,7 @@ public class AuthController {
             log.info("пользователь " + login.getUsername() + " вошел успешно");
             return ResponseEntity.ok().build();
         } else {
-            log.info("пользователь " + login.getUsername() + " не авторизован");
+            log.info("Ошибка входа");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
