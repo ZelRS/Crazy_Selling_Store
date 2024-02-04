@@ -32,3 +32,7 @@ CREATE TABLE "comments" (
 	CONSTRAINT comments_pkey PRIMARY KEY (pk),
 	CONSTRAINT comments_user_fkey FOREIGN KEY (user_id) REFERENCES users(id)
 );
+
+--changeset RomanZelenin:1
+ALTER TABLE comments
+    ADD COLUMN ad_id int4 NULL;

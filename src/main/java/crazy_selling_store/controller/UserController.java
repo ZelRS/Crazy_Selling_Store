@@ -14,6 +14,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
@@ -28,8 +30,8 @@ public class UserController {
 
     @PostMapping("/set_password")
     @Operation(summary = "Обновление пароля")
-    public ResponseEntity<String> setPassword(@RequestBody NewPassword newPassword
-            , Authentication authentication) {
+    public ResponseEntity<String> setPassword(@RequestBody NewPassword newPassword,
+                                              Authentication authentication) {
         log.info("Попытка смены пароля (Пользователь: " + authentication.getName() + ")");
         if (!authentication.isAuthenticated()) {
             log.info("Запрещено");
@@ -45,57 +47,37 @@ public class UserController {
 
     @GetMapping(value = "/me", produces = APPLICATION_JSON_VALUE)
     @Operation(summary = "Получение информации об авторизованном пользователе")
-    public ResponseEntity<User> getUser() {
-        log.info("sssssss");
-//        try {
-//            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//            String loggedInUsername = authentication != null ? authentication.getName() : null;
-//
-//            if (loggedInUsername == null) {
-//                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-//            }
-//            crazy_selling_store.entity.User user = userRepository.findUserByEmail(loggedInUsername)
-//                    .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
-//
-//            User userDTO = userMapper.toDTOUser(user);
-//            return ResponseEntity.ok(userDTO);
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-//        }
-        return ResponseEntity.ok().build();
+    public ResponseEntity<User> getUserInformation(Authentication authentication) {
+        User userInfo = userService.getUserInformation(authentication);
+        if (userInfo == null) {
+            log.info("Ошибка получения информации о пользователе (Пользователь: " + authentication.getName() + ")");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        log.info("Информация о пользователе успешно получена (Пользователь: " + authentication.getName() + ")");
+        return ResponseEntity.ok(userInfo);
     }
 
     @PatchMapping(value = "/me", produces = APPLICATION_JSON_VALUE)
     @Operation(summary = "Обновление информации об авторизованном пользователе")
-    public ResponseEntity<UpdateUser> updateInfo(@RequestBody(required = false) UpdateUser updateUser) {
-        log.info("bbbbbbbbb");
-//        try {
-//            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//            String loggedInUsername = authentication != null ? authentication.getName() : null;
-//
-//            if (loggedInUsername == null) {
-//                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-//            }
-//            crazy_selling_store.entity.User user = userRepository.findUserByEmail(loggedInUsername)
-//                    .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
-//            user = userMapper.toEntityUser(updateUser);
-//            user = userRepository.save(user);
-//            UpdateUser updatedUserDTO = userMapper.toDTOUpdateUser(user);
-//            return ResponseEntity.ok(updatedUserDTO);
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-//        }
-        return ResponseEntity.ok().build();
+    public ResponseEntity<UpdateUser> updateUserInfo(@RequestBody UpdateUser updateUser,
+                                                     Authentication authentication) {
+        UpdateUser updatedUserInfo = userService.updateUserInfo(updateUser, authentication);
+        if (updatedUserInfo == null) {
+            log.info("Ошибка обновления информации о пользователе (Пользователь: " + authentication.getName() + ")");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        log.info("Информация о пользователе успешно обновлена (Пользователь: " + authentication.getName() + ")");
+        return ResponseEntity.ok(updatedUserInfo);
     }
+
 
     @PatchMapping(value = "/me/image", consumes = MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Обновление аватара авторизованного пользователя")
-    public ResponseEntity<String> updateAvatar(@RequestParam("image") MultipartFile multipartFile) {
-//        log.info("vvvvvvvvvv");
-//        if (!multipartFile.isEmpty()) {
-//            String fileUrl = fileStorageService.saveFile(multipartFile);
-//            return ResponseEntity.ok(fileUrl);
-//        }
-        return ResponseEntity.ok().build();
+    public ResponseEntity<String> updateUserAvatar(@RequestParam("image") MultipartFile image,
+                                               Authentication authentication) throws IOException {
+        log.info("vvvvvvvvvv");
+        userService.updateUserAvatar(image, authentication);
+
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

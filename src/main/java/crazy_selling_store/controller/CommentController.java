@@ -4,6 +4,7 @@ import crazy_selling_store.dto.comments.Comment;
 import crazy_selling_store.dto.comments.Comments;
 import crazy_selling_store.dto.comments.CreateOrUpdateComment;
 import crazy_selling_store.mapper.CommentMapper;
+import crazy_selling_store.service.impl.CommentServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -22,18 +23,17 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @Tag(name = "Комментарии")
 public class CommentController {
     private final CommentMapper commentMapper;
+    private final CommentServiceImpl commentService;
 
+    //    выполнено
     @GetMapping(value = "/{id}/comments", produces = APPLICATION_JSON_VALUE)
     @Operation(summary = "Получение комментариев объявления")
     public ResponseEntity<Comments> getAdComments(@PathVariable("id") Integer id) {
-        Comments stubObj = new Comments(); /*объект-заглушка*/
-        int stub = 10; /*заглушка*/
-        if (stub > 10) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        } else if (stub < 10) {
+        Comments comments = commentService.getAdComments(id);
+        if (comments == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return ResponseEntity.ok(stubObj);
+        return ResponseEntity.ok(comments);
     }
 
     @PostMapping(value = "/{id}/comments", produces = APPLICATION_JSON_VALUE)
@@ -53,7 +53,7 @@ public class CommentController {
     @DeleteMapping("/{adId}/comments/{commentId}")
     @Operation(summary = "Удаление комментария")
     public ResponseEntity<Void> deleteAdComment(@PathVariable("adId") Integer adId,
-                                           @PathVariable("commentId") Integer commentId) {
+                                                @PathVariable("commentId") Integer commentId) {
         int stub = 10; /*заглушка*/
         if (stub > 10) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();

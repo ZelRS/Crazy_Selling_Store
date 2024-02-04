@@ -10,7 +10,7 @@ import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring")
 public interface AdMapper {
-    CommentMapper INSTANCE = Mappers.getMapper(CommentMapper.class);
+    AdMapper INSTANCE = Mappers.getMapper(AdMapper.class);
 
 
     //-------------------to Entity mappers------------------------------
@@ -34,9 +34,8 @@ public interface AdMapper {
 
 
     //  происходит маппинг необходимых полей из сущности User и Ad в DTO объявления Ad
-    @Mapping(source = "user.id", target = "author")
-    @Mapping(source = "ad.image", target = "image")
-    crazy_selling_store.dto.ads.Ad toDTOAd(User user, Ad ad);
+
+    crazy_selling_store.dto.ads.Ad toDTOAd(Ad ad);
 
 
     //  происходит маппинг необходимых полей из сущности User и Ad в DTO расширенного объявления ExtendedAd
