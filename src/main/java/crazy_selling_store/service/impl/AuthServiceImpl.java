@@ -1,54 +1,58 @@
 package crazy_selling_store.service.impl;
 
+import crazy_selling_store.dto.security.Register;
+import crazy_selling_store.mapper.UserMapper;
 import crazy_selling_store.repository.UserRepository;
 import crazy_selling_store.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
-
-    private final UserDetailsManager manager;
     private final PasswordEncoder encoder;
-
-    private final UserRepository userRepository;
+    private final SpecialUserDetailsService manager;
+    private final UserRepository repository;
 
     @Override
     public boolean login(String userName, String password) {
-        Optional<crazy_selling_store.entity.User> user = userRepository.findUserByEmail(userName);
-        if (user.isEmpty()) {
-            log.info("Пользователь " + userName + " отсутствует");
+        UserDetails userDetails;
+        try {
+            userDetails = manager.loadUserByUsername(userName);
+        } catch (UsernameNotFoundException e) {
+            log.info("Не зарегистрирован (Пользователь: " + userName + ")");
             return false;
-        } else if (!user.get().getPassword().equals(password)) {
-            log.info("Пароль введен неверно");
+        }
+        if (!encoder.matches(password, userDetails.getPassword())) {
+            log.info("Введен не верный пароль (Пользователь: " + userName + ")");
             return false;
         }
         return true;
     }
 
     @Override
-    public boolean register(crazy_selling_store.entity.User user) {
-        if (userRepository.findUserByEmail(user.getEmail()).isPresent()) {
-            log.info("Такой пользователь существует");
-            return false;
+    public boolean register(Register register) {
+        try {
+            manager.loadUserByUsername(register.getUsername());
+        } catch (UsernameNotFoundException e) {
+            User.builder()
+                    .passwordEncoder(this.encoder::encode)
+                    .password(register.getPassword())
+                    .username(register.getUsername())
+                    .roles(register.getRole().name())
+                    .build();
+            crazy_selling_store.entity.User user = UserMapper.INSTANCE.toEntityUser(register);
+            user.setPassword(encoder.encode(register.getPassword()));
+            repository.save(user);
+            return true;
         }
-        manager.createUser(
-                User.builder()
-                        .passwordEncoder(this.encoder::encode)
-                        .password(user.getPassword())
-                        .username(user.getEmail())
-                        .roles(user.getRole().name())
-                        .build());
-        userRepository.save(user);
-        return true;
+        log.info("Уже зарегистрирован (Пользователь: " + register.getUsername() + ")");
+        return false;
     }
-
 }
