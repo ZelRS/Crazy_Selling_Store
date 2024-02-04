@@ -32,3 +32,16 @@ CREATE TABLE "comments" (
 	CONSTRAINT comments_pkey PRIMARY KEY (pk),
 	CONSTRAINT comments_user_fkey FOREIGN KEY (user_id) REFERENCES users(id)
 );
+
+--changeset YuriiYatsenko:2
+ALTER TABLE users
+    ALTER COLUMN email      TYPE varchar(50),
+    ALTER COLUMN first_name TYPE varchar(20),
+	ALTER COLUMN last_name  TYPE varchar(20),
+	ALTER COLUMN "password" TYPE varchar(50),
+	ALTER COLUMN phone      TYPE varchar(20),
+	ALTER COLUMN "role"     TYPE varchar(50);
+ALTER TABLE ads
+    ALTER COLUMN title      TYPE varchar(100);
+ALTER TABLE "comments"
+    ALTER COLUMN "text"     TYPE varchar(2000);
