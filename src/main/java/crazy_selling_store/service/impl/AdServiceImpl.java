@@ -33,7 +33,8 @@ public class AdServiceImpl implements AdService {
     private final AdRepository adRepository;
     private final UserRepository userRepository;
 
-    // выполнено
+    @Transactional
+    @Override
     public crazy_selling_store.dto.ads.Ad createAd(CreateOrUpdateAd properties,
                                                    MultipartFile image,
                                                    Authentication authentication) throws IOException {
@@ -66,17 +67,17 @@ public class AdServiceImpl implements AdService {
         return INSTANCE.toDTOAd(newAd);
     }
 
-    // выполнено
+    @Override
     public Ads getAllAds() {
         List<crazy_selling_store.dto.ads.Ad> adsList = new ArrayList<>();
         for (Ad ad : adRepository.findAll()) {
             adsList.add(INSTANCE.toDTOAd(ad));
         }
         return new Ads(adsList.size(), adsList);
-
     }
 
-    //    выполнено
+    @Transactional
+    @Override
     public Ads getAuthUserAds(Authentication authentication) {
         User userFromDB = null;
         try {
@@ -92,7 +93,7 @@ public class AdServiceImpl implements AdService {
         return new Ads(adsList.size(), adsList);
     }
 
-
+    @Override
     public ExtendedAd getAdFullInfo(Integer id) {
         Ad ad = adRepository.getAdByPk(id);
         User user = ad.getUser();
@@ -100,6 +101,7 @@ public class AdServiceImpl implements AdService {
     }
 
     @Transactional
+    @Override
     public boolean deleteAd(Integer id) throws IOException {
         Ad ad = adRepository.getAdByPk(id);
         if (ad == null) {
@@ -112,6 +114,8 @@ public class AdServiceImpl implements AdService {
 
     }
 
+    @Transactional
+    @Override
     public crazy_selling_store.dto.ads.Ad updateAdInfo(Integer id, CreateOrUpdateAd createOrUpdateAd) {
         Ad ad = adRepository.getAdByPk(id);
         if (ad == null) {
@@ -124,6 +128,7 @@ public class AdServiceImpl implements AdService {
         return INSTANCE.toDTOAd(ad);
     }
 
+    @Override
     public byte[] updateAdPhoto(Integer id, MultipartFile image) throws IOException {
         Ad ad = adRepository.getAdByPk(id);
         if (ad == null) {

@@ -31,6 +31,7 @@ public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
 
+    @Override
     public Comments getAdComments(Integer id) {
         Ad ad = adRepository.getAdByPk(id);
         List<crazy_selling_store.dto.comments.Comment> comments = new ArrayList<>();
@@ -41,6 +42,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Transactional
+    @Override
     public crazy_selling_store.dto.comments.Comment createAdComment(Integer id, CreateOrUpdateComment text,
                                                                     Authentication authentication) {
         Ad ad = adRepository.getAdByPk(id);
@@ -67,6 +69,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Transactional
+    @Override
     public boolean deleteAdComment(Integer adId, Integer commentId) {
         Comment comment = commentRepository.getCommentByPk(commentId);
         Ad ad = adRepository.getAdByPk(adId);
@@ -81,6 +84,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Transactional
+    @Override
     public crazy_selling_store.dto.comments.Comment updateAdComment(Integer adId, Integer commentId,
                                                                     CreateOrUpdateComment text) {
         Comment comment = commentRepository.getCommentByPk(commentId);

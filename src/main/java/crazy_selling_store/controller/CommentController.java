@@ -24,18 +24,19 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class CommentController {
     private final CommentServiceImpl commentService;
 
-    //    выполнено
     @GetMapping(value = "/{id}/comments", produces = APPLICATION_JSON_VALUE)
     @Operation(summary = "Получение комментариев объявления")
-    public ResponseEntity<Comments> getAdComments(@PathVariable("id") Integer id) {
+    public ResponseEntity<Comments> getAdComments(@PathVariable("id") Integer id, Authentication authentication) {
         Comments comments = commentService.getAdComments(id);
+        if (!authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         if (comments == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         return ResponseEntity.ok(comments);
     }
 
-    //    выполнено
     @PostMapping(value = "/{id}/comments", produces = APPLICATION_JSON_VALUE)
     @Operation(summary = "Добавление комментария к объявлению")
     public ResponseEntity<Comment> createAdComment(@PathVariable("id") Integer id,
@@ -51,24 +52,30 @@ public class CommentController {
         return ResponseEntity.ok(comment);
     }
 
-    //    выполнено
     @DeleteMapping("/{adId}/comments/{commentId}")
     @Operation(summary = "Удаление комментария")
     public ResponseEntity<Void> deleteAdComment(@PathVariable("adId") Integer adId,
-                                                @PathVariable("commentId") Integer commentId) {
+                                                @PathVariable("commentId") Integer commentId,
+                                                Authentication authentication) {
+        if (!authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         if (!commentService.deleteAdComment(adId, commentId)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    //    выполнено
     @PatchMapping(value = "/{adId}/comments/{commentId}", produces = APPLICATION_JSON_VALUE)
     @Operation(summary = "Обновление комментария")
     public ResponseEntity<Comment> updateAdComment(@PathVariable("adId") Integer adId,
                                                    @PathVariable("commentId") Integer commentId,
-                                                   @RequestBody(required = false) CreateOrUpdateComment text) {
+                                                   @RequestBody CreateOrUpdateComment text,
+                                                   Authentication authentication) {
         Comment comment = commentService.updateAdComment(adId, commentId, text);
+        if (!authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         if (comment == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }

@@ -75,9 +75,9 @@ public class UserController {
     @Operation(summary = "Обновление аватара авторизованного пользователя")
     public ResponseEntity<String> updateUserAvatar(@RequestParam("image") MultipartFile image,
                                                Authentication authentication) throws IOException {
-        log.info("vvvvvvvvvv");
-        userService.updateUserAvatar(image, authentication);
-
+        if (!userService.updateUserAvatar(image, authentication)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

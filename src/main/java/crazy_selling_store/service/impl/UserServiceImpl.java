@@ -30,6 +30,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder encoder;
 
     @Transactional
+    @Override
     public boolean setPassword(NewPassword newPassword, Authentication authentication) {
         User userFromDB;
         try {
@@ -44,6 +45,7 @@ public class UserServiceImpl implements UserService {
         return true;
     }
 
+    @Override
     public crazy_selling_store.dto.users.User getUserInformation(Authentication authentication) {
         User userFromDB;
         try {
@@ -57,6 +59,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional
+    @Override
     public UpdateUser updateUserInfo(UpdateUser updateUser, Authentication authentication) {
         User userFromDB;
         try {
@@ -74,13 +77,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional
-    public void updateUserAvatar(MultipartFile image, Authentication authentication) throws IOException {
-        User userFromDB = null;
+    @Override
+    public boolean updateUserAvatar(MultipartFile image, Authentication authentication) throws IOException {
+        User userFromDB;
         try {
             userFromDB = repository.findUserByEmail(authentication.getName())
                     .orElseThrow(() -> new UsernameNotFoundException("Пользователь не зарегистрирован"));
         } catch (UsernameNotFoundException e) {
             log.info("Пользователь не зарегистрирован");
+            return false;
 
         }
         String imageDir = "src/main/resources/userAvatars";
@@ -101,5 +106,6 @@ public class UserServiceImpl implements UserService {
         }
         userFromDB.setImage(imageDir + savedFileName);
         repository.save(userFromDB);
+        return true;
     }
 }
