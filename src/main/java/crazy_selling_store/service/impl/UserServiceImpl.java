@@ -11,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
@@ -28,6 +29,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository repository;
     private final PasswordEncoder encoder;
 
+    @Transactional
     public boolean setPassword(NewPassword newPassword, Authentication authentication) {
         User userFromDB;
         try {
@@ -54,6 +56,7 @@ public class UserServiceImpl implements UserService {
         return INSTANCE.toDTOUser(userFromDB);
     }
 
+    @Transactional
     public UpdateUser updateUserInfo(UpdateUser updateUser, Authentication authentication) {
         User userFromDB;
         try {
@@ -70,6 +73,7 @@ public class UserServiceImpl implements UserService {
         return updateUser;
     }
 
+    @Transactional
     public void updateUserAvatar(MultipartFile image, Authentication authentication) throws IOException {
         User userFromDB = null;
         try {
@@ -83,8 +87,9 @@ public class UserServiceImpl implements UserService {
         String origFilename = image.getOriginalFilename();
         assert origFilename != null;
         assert userFromDB != null;
-        Path filePath = Path.of(imageDir, userFromDB.getEmail() + "." +
-                Objects.requireNonNull(origFilename.substring(origFilename.lastIndexOf(".") + 1)));
+        String savedFileName = userFromDB.getEmail() + "." +
+                Objects.requireNonNull(origFilename.substring(origFilename.lastIndexOf(".") + 1));
+        Path filePath = Path.of(imageDir, savedFileName);
         Files.createDirectories(filePath.getParent());
         Files.deleteIfExists(filePath);
         try (InputStream is = image.getInputStream();
@@ -94,6 +99,7 @@ public class UserServiceImpl implements UserService {
         ) {
             bis.transferTo(bos);
         }
-        userFromDB.setImage(imageDir);
+        userFromDB.setImage(imageDir + savedFileName);
+        repository.save(userFromDB);
     }
 }

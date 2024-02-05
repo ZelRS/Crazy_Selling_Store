@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
@@ -36,9 +37,7 @@ public class AdServiceImpl implements AdService {
     public crazy_selling_store.dto.ads.Ad createAd(CreateOrUpdateAd properties,
                                                    MultipartFile image,
                                                    Authentication authentication) throws IOException {
-///////////////////////////////////////////////////
         Ad newAd = INSTANCE.toEntityAd(properties);
-///////////////////////////////////////////
         User userFromDB = null;
         try {
             userFromDB = userRepository.findUserByEmail(authentication.getName())
@@ -47,7 +46,6 @@ public class AdServiceImpl implements AdService {
             log.info("Пользователь не зарегистрирован");
         }
         newAd.setUser(userFromDB);
-////////////////////////////////////////////////////////////////////////
         String imageDir = "src/main/resources/adImages";
         String origFilename = image.getOriginalFilename();
         assert origFilename != null;
@@ -62,7 +60,8 @@ public class AdServiceImpl implements AdService {
         ) {
             bis.transferTo(bos);
         }
-        newAd.setImage(imageDir);
+        newAd.setImage(imageDir + "/" + properties.getTitle() + "." +
+                Objects.requireNonNull(origFilename.substring(origFilename.lastIndexOf(".") + 1)));
         adRepository.save(newAd);
         return INSTANCE.toDTOAd(newAd);
     }
@@ -95,12 +94,54 @@ public class AdServiceImpl implements AdService {
 
 
     public ExtendedAd getAdFullInfo(Integer id) {
-        log.info("2");
         Ad ad = adRepository.getAdByPk(id);
-        log.info("3");
         User user = ad.getUser();
-        log.info("4");
         return INSTANCE.toDTOExtendedAd(user, ad);
+    }
+
+    @Transactional
+    public boolean deleteAd(Integer id) throws IOException {
+        Ad ad = adRepository.getAdByPk(id);
+        if (ad == null) {
+            return false;
+        }
+        Path path = Path.of(ad.getImage());
+        Files.delete(path);
+        adRepository.deleteByPk(id);
+        return true;
+
+    }
+
+    public crazy_selling_store.dto.ads.Ad updateAdInfo(Integer id, CreateOrUpdateAd createOrUpdateAd) {
+        Ad ad = adRepository.getAdByPk(id);
+        if (ad == null) {
+            return null;
+        }
+        ad.setTitle(createOrUpdateAd.getTitle());
+        ad.setPrice(createOrUpdateAd.getPrice());
+        ad.setDescription(createOrUpdateAd.getDescription());
+        adRepository.save(ad);
+        return INSTANCE.toDTOAd(ad);
+    }
+
+    public byte[] updateAdPhoto(Integer id, MultipartFile image) throws IOException {
+        Ad ad = adRepository.getAdByPk(id);
+        if (ad == null) {
+            return null;
+        }
+
+        String fileURL = ad.getImage();
+        Path path = Path.of(fileURL);
+        Files.deleteIfExists(path);
+
+        try (InputStream is = image.getInputStream();
+             OutputStream os = Files.newOutputStream(path, CREATE_NEW);
+             BufferedInputStream bis = new BufferedInputStream(is, 1024);
+             BufferedOutputStream bos = new BufferedOutputStream(os, 1024)
+        ) {
+            bis.transferTo(bos);
+        }
+        return Files.readAllBytes(path);
     }
 }
 

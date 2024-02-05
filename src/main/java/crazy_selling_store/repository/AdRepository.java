@@ -11,5 +11,6 @@ public interface AdRepository extends JpaRepository<Ad, Integer> {
     List<Ad> findByUser(User user);
 
     Ad getAdByPk(Integer id);
-    // some code
+
+    void deleteByPk(Integer id);
 }

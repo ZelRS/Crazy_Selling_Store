@@ -3,7 +3,6 @@ package crazy_selling_store.controller;
 import crazy_selling_store.dto.comments.Comment;
 import crazy_selling_store.dto.comments.Comments;
 import crazy_selling_store.dto.comments.CreateOrUpdateComment;
-import crazy_selling_store.mapper.CommentMapper;
 import crazy_selling_store.service.impl.CommentServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -11,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -22,7 +22,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RequestMapping("/ads")
 @Tag(name = "Комментарии")
 public class CommentController {
-    private final CommentMapper commentMapper;
     private final CommentServiceImpl commentService;
 
     //    выполнено
@@ -36,49 +35,43 @@ public class CommentController {
         return ResponseEntity.ok(comments);
     }
 
+    //    выполнено
     @PostMapping(value = "/{id}/comments", produces = APPLICATION_JSON_VALUE)
     @Operation(summary = "Добавление комментария к объявлению")
     public ResponseEntity<Comment> createAdComment(@PathVariable("id") Integer id,
-                                                   @RequestBody(required = false) CreateOrUpdateComment text) {
-        Comment stubObj = new Comment(); /*объект-заглушка*/
-        int stub = 10; /*заглушка*/
-        if (stub > 10) {
+                                                   @RequestBody CreateOrUpdateComment text,
+                                                   Authentication authentication) {
+        Comment comment = commentService.createAdComment(id, text, authentication);
+        if (!authentication.isAuthenticated()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        } else if (stub < 10) {
+        }
+        if (comment == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return ResponseEntity.ok(stubObj);
+        return ResponseEntity.ok(comment);
     }
 
+    //    выполнено
     @DeleteMapping("/{adId}/comments/{commentId}")
     @Operation(summary = "Удаление комментария")
     public ResponseEntity<Void> deleteAdComment(@PathVariable("adId") Integer adId,
                                                 @PathVariable("commentId") Integer commentId) {
-        int stub = 10; /*заглушка*/
-        if (stub > 10) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        } else if (stub < 10 && stub > 0) {
+        if (!commentService.deleteAdComment(adId, commentId)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        } else if (stub <= 0) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
+    //    выполнено
     @PatchMapping(value = "/{adId}/comments/{commentId}", produces = APPLICATION_JSON_VALUE)
     @Operation(summary = "Обновление комментария")
     public ResponseEntity<Comment> updateAdComment(@PathVariable("adId") Integer adId,
                                                    @PathVariable("commentId") Integer commentId,
-                                                   @RequestBody(required = false) CreateOrUpdateComment createOrUpdateComment) {
-        Comment stubObj = new Comment(); /*объект-заглушка*/
-        int stub = 10; /*заглушка*/
-        if (stub > 10) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        } else if (stub < 10 && stub > 0) {
+                                                   @RequestBody(required = false) CreateOrUpdateComment text) {
+        Comment comment = commentService.updateAdComment(adId, commentId, text);
+        if (comment == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        } else if (stub <= 0) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        return ResponseEntity.ok(stubObj);
+        return ResponseEntity.ok(comment);
     }
 }
