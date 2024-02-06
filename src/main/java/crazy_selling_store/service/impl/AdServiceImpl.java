@@ -46,7 +46,6 @@ public class AdServiceImpl implements AdService {
                     .orElseThrow(() -> new UsernameNotFoundException("Пользователь не зарегистрирован"));
         } catch (UsernameNotFoundException e) {
             log.info("Пользователь не зарегистрирован");
-//            return null;
         }
         newAd.setUser(userFromDB);
         String imageDir = "src/main/resources/adImages";
@@ -114,10 +113,14 @@ public class AdServiceImpl implements AdService {
         adRepository.deleteByPk(id);
     }
 
+//    необходимо добавить логику переименования изображения и пути до файла, чтобы они корректно удалялись с сервера
     @Transactional
     @Override
     public crazy_selling_store.dto.ads.Ad updateAdInfo(Integer id, CreateOrUpdateAd createOrUpdateAd) {
         Ad ad = adRepository.getAdByPk(id);
+
+
+
         ad.setTitle(createOrUpdateAd.getTitle());
         ad.setPrice(createOrUpdateAd.getPrice());
         ad.setDescription(createOrUpdateAd.getDescription());
