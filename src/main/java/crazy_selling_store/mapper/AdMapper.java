@@ -35,7 +35,9 @@ public interface AdMapper {
 
     //  происходит маппинг необходимых полей из сущности User и Ad в DTO объявления Ad
 
-    crazy_selling_store.dto.ads.Ad toDTOAd(Ad ad);
+    @Mapping(source = "user.id", target = "author")
+    @Mapping(source = "ad.image", target = "image")
+    crazy_selling_store.dto.ads.Ad toDTOAd(User user, Ad ad);
 
 
     //  происходит маппинг необходимых полей из сущности User и Ad в DTO расширенного объявления ExtendedAd

@@ -22,7 +22,7 @@ public interface AdService {
     ExtendedAd getAdFullInfo(Integer id);
 
     @Transactional
-    boolean deleteAd(Integer id) throws IOException;
+    void deleteAd(Integer id) throws IOException;
 
     @Transactional
     Ad updateAdInfo(Integer id, CreateOrUpdateAd createOrUpdateAd);

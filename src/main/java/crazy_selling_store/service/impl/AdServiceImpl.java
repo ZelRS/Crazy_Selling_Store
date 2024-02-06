@@ -5,6 +5,7 @@ import crazy_selling_store.dto.ads.CreateOrUpdateAd;
 import crazy_selling_store.dto.ads.ExtendedAd;
 import crazy_selling_store.entity.Ad;
 import crazy_selling_store.entity.User;
+import crazy_selling_store.exceptions.EntityNotFoundException;
 import crazy_selling_store.repository.AdRepository;
 import crazy_selling_store.repository.UserRepository;
 import crazy_selling_store.service.AdService;
@@ -45,6 +46,7 @@ public class AdServiceImpl implements AdService {
                     .orElseThrow(() -> new UsernameNotFoundException("Пользователь не зарегистрирован"));
         } catch (UsernameNotFoundException e) {
             log.info("Пользователь не зарегистрирован");
+//            return null;
         }
         newAd.setUser(userFromDB);
         String imageDir = "src/main/resources/adImages";
@@ -64,14 +66,14 @@ public class AdServiceImpl implements AdService {
         newAd.setImage(imageDir + "/" + properties.getTitle() + "." +
                 Objects.requireNonNull(origFilename.substring(origFilename.lastIndexOf(".") + 1)));
         adRepository.save(newAd);
-        return INSTANCE.toDTOAd(newAd);
+        return INSTANCE.toDTOAd(newAd.getUser(), newAd);
     }
 
     @Override
     public Ads getAllAds() {
         List<crazy_selling_store.dto.ads.Ad> adsList = new ArrayList<>();
         for (Ad ad : adRepository.findAll()) {
-            adsList.add(INSTANCE.toDTOAd(ad));
+            adsList.add(INSTANCE.toDTOAd(ad.getUser(), ad));
         }
         return new Ads(adsList.size(), adsList);
     }
@@ -88,7 +90,7 @@ public class AdServiceImpl implements AdService {
         }
         List<crazy_selling_store.dto.ads.Ad> adsList = new ArrayList<>();
         for (Ad ad : adRepository.findByUser(userFromDB)) {
-            adsList.add(INSTANCE.toDTOAd(ad));
+            adsList.add(INSTANCE.toDTOAd(ad.getUser(), ad));
         }
         return new Ads(adsList.size(), adsList);
     }
@@ -96,45 +98,36 @@ public class AdServiceImpl implements AdService {
     @Override
     public ExtendedAd getAdFullInfo(Integer id) {
         Ad ad = adRepository.getAdByPk(id);
+        if (ad == null) {
+            return null;
+        }
         User user = ad.getUser();
         return INSTANCE.toDTOExtendedAd(user, ad);
     }
 
     @Transactional
     @Override
-    public boolean deleteAd(Integer id) throws IOException {
+    public void deleteAd(Integer id) throws IOException {
         Ad ad = adRepository.getAdByPk(id);
-        if (ad == null) {
-            return false;
-        }
         Path path = Path.of(ad.getImage());
         Files.delete(path);
         adRepository.deleteByPk(id);
-        return true;
-
     }
 
     @Transactional
     @Override
     public crazy_selling_store.dto.ads.Ad updateAdInfo(Integer id, CreateOrUpdateAd createOrUpdateAd) {
         Ad ad = adRepository.getAdByPk(id);
-        if (ad == null) {
-            return null;
-        }
         ad.setTitle(createOrUpdateAd.getTitle());
         ad.setPrice(createOrUpdateAd.getPrice());
         ad.setDescription(createOrUpdateAd.getDescription());
         adRepository.save(ad);
-        return INSTANCE.toDTOAd(ad);
+        return INSTANCE.toDTOAd(ad.getUser(), ad);
     }
 
     @Override
     public byte[] updateAdPhoto(Integer id, MultipartFile image) throws IOException {
         Ad ad = adRepository.getAdByPk(id);
-        if (ad == null) {
-            return null;
-        }
-
         String fileURL = ad.getImage();
         Path path = Path.of(fileURL);
         Files.deleteIfExists(path);
@@ -147,6 +140,11 @@ public class AdServiceImpl implements AdService {
             bis.transferTo(bos);
         }
         return Files.readAllBytes(path);
+    }
+
+    public boolean isAdAuthor(String username, Integer id) {
+        Ad ad = adRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        return ad.getUser().getEmail().equals(username);
     }
 }
 
