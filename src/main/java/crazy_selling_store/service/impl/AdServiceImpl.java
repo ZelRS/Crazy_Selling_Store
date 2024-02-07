@@ -40,7 +40,7 @@ public class AdServiceImpl implements AdService {
     public Ad createAd(CreateOrUpdateAd properties,
                        MultipartFile image,
                        Authentication authentication) throws IOException {
-        AdEntity newAd = INSTANCE.toEntityAd(properties);
+        AdEntity adEntity = INSTANCE.toEntityAd(properties);
         UserEntity userFromDB = null;
         try {
             if (authentication != null) {
@@ -52,7 +52,7 @@ public class AdServiceImpl implements AdService {
         } catch (UsernameNotFoundException e) {
             log.info("Пользователь не зарегистрирован");
         }
-        newAd.setUser(userFromDB);
+        adEntity.setUser(userFromDB);
         String imageDir = "src/main/resources/adImages";
         String origFilename = image.getOriginalFilename();
         assert origFilename != null;
@@ -67,10 +67,10 @@ public class AdServiceImpl implements AdService {
         ) {
             bis.transferTo(bos);
         }
-        newAd.setImage(imageDir + "/" + properties.getTitle() + "." +
+        adEntity.setImage(imageDir + "/" + properties.getTitle() + "." +
                 Objects.requireNonNull(origFilename.substring(origFilename.lastIndexOf(".") + 1)));
-        adRepository.save(newAd);
-        return INSTANCE.toDTOAd(newAd.getUser(), newAd);
+        adRepository.save(adEntity);
+        return INSTANCE.toDTOAd(adEntity.getUser(), adEntity);
     }
 
     @Override
@@ -151,7 +151,8 @@ public class AdServiceImpl implements AdService {
     }
 
     public boolean isAdAuthor(String username, Integer id) {
-        AdEntity ad = adRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+            AdEntity ad = adRepository.findById(id)
+                    .orElseThrow(() -> new EntityNotFoundException("Объявление не найдено"));
         return ad.getUser().getEmail().equals(username);
     }
 }

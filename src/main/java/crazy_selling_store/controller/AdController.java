@@ -32,29 +32,36 @@ public class AdController {
     @GetMapping(produces = APPLICATION_JSON_VALUE)
     @Operation(summary = "Получение всех объявлений")
     public ResponseEntity<Ads> getAllAds() {
+        log.info("Получен список всех объявлений");
         return ResponseEntity.ok(adService.getAllAds());
     }
 
     @PostMapping(consumes = MULTIPART_FORM_DATA_VALUE, produces = APPLICATION_JSON_VALUE)
     @Operation(summary = "Добавление объявления")
-    public ResponseEntity<Ad> createAd(@ModelAttribute CreateOrUpdateAd properties,
+    public ResponseEntity<Ad> createAd(@RequestPart CreateOrUpdateAd properties,
                                        @RequestPart MultipartFile image,
                                        Authentication authentication) throws IOException {
+        log.info("Попытка создания объявления (Пользователь: " + authentication.getName() + ")");
         Ad ad = adService.createAd(properties, image, authentication);
         if (ad == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+        log.info("Объявление \"" + properties.getTitle() +
+                "\" успешно создано (Пользователь: " + authentication.getName() + ")");
         return ResponseEntity.status(HttpStatus.CREATED).body(ad);
 
     }
 
     @GetMapping(value = "/{id}", produces = APPLICATION_JSON_VALUE)
     @Operation(summary = "Получение информации об объявлении")
-    public ResponseEntity<ExtendedAd> getAdFullInfo(@PathVariable("id") Integer id) {
+    public ResponseEntity<ExtendedAd> getAdFullInfo(@PathVariable("id") Integer id,
+                                                    Authentication authentication) {
         ExtendedAd extendedAd = adService.getAdFullInfo(id);
         if (extendedAd == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
+        log.info("Полная информация об объявлении \"" + extendedAd.getTitle() +
+                "\" успешно получена (Пользователь: " + authentication.getName() + ")");
         return ResponseEntity.ok(extendedAd);
     }
 
@@ -62,7 +69,9 @@ public class AdController {
     @Operation(summary = "Удаление объявления")
     @PreAuthorize(value = "hasRole('ADMIN') or @adServiceImpl.isAdAuthor(authentication.getName(), #id)")
     public ResponseEntity<Void> deleteAd(@PathVariable("id") Integer id) throws IOException {
+        log.info("Попытка удаления объявления");
         adService.deleteAd(id);
+        log.info("Объявление успешно удалено");
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
@@ -71,13 +80,16 @@ public class AdController {
     @PreAuthorize(value = "hasRole('ADMIN') or @adServiceImpl.isAdAuthor(authentication.getName(), #id)")
     public ResponseEntity<Ad> updateAdInfo(@PathVariable("id") Integer id,
                                            @RequestBody CreateOrUpdateAd createOrUpdateAd) {
+        log.info("Попытка изменения информации об объявлении \"" + createOrUpdateAd.getTitle() + "\"");
         Ad ad = adService.updateAdInfo(id, createOrUpdateAd);
+        log.info("Информация объявления \"" + createOrUpdateAd.getTitle() + "\" успешно обновлена");
         return ResponseEntity.ok(ad);
     }
 
     @GetMapping(value = "/me", produces = APPLICATION_JSON_VALUE)
     @Operation(summary = "Получение объявлений авторизованного пользователя")
     public ResponseEntity<Ads> getAuthUserAds(Authentication authentication) {
+        log.info("Объявления пользователя " + authentication.getName() + " успешно получены");
         return ResponseEntity.ok(adService.getAuthUserAds(authentication));
 
     }
@@ -89,7 +101,9 @@ public class AdController {
     @PreAuthorize(value = "hasRole('ADMIN') or @adServiceImpl.isAdAuthor(authentication.getName(), #id)")
     public ResponseEntity<byte[]> updateAdPhoto(@PathVariable("id") Integer id,
                                                 @RequestParam MultipartFile image) throws IOException {
+        log.info("Попытка изменения изображения объявления");
         byte[] imageBytes = adService.updateAdPhoto(id, image);
+        log.info("Изображение успешно обновлено");
         return ResponseEntity.ok(imageBytes);
     }
 }

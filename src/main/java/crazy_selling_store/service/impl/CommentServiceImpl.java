@@ -106,7 +106,8 @@ public class CommentServiceImpl implements CommentService {
     }
 
     public boolean isCommentAuthor(String username, Integer id) {
-        CommentEntity comment = commentRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        CommentEntity comment = commentRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Объявление не найдено"));
         return comment.getUser().getEmail().equals(username);
     }
 }
