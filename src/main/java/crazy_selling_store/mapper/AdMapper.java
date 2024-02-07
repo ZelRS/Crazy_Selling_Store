@@ -13,35 +13,15 @@ import org.mapstruct.factory.Mappers;
 public interface AdMapper {
     AdMapper INSTANCE = Mappers.getMapper(AdMapper.class);
 
-
-    //-------------------to Entity mappers------------------------------
-//  Ad toEntityAd(crazy_selling_store.dto.ads.Ad dto); данный маппинг возможно не понадобится
-//  Ad toEntityAd(ExtendedAd dto); данный маппинг возможно не понадобится
-//  Ad toEntityAd(Ads dto); данный маппинг возможно не понадобится
-
-
-    //  происходит маппинг DTO с единственным полем text в аналогичное поле сущности объявления Ad
+    //  происходит маппинг DTO CreateOrUpdate в сущность AdEntity
     AdEntity toEntityAd(CreateOrUpdateAd dto);
 
-
-
-
-
-
-    //----------------------to DTO mappers--------------------------------
-
-//  CreateOrUpdateAd toDTOCreateOrUpdateAd(Ad ad); данный маппинг возможно не понадобится
-//  Ads toDTOAds(Ad ad); данный маппинг возможно не понадобится
-
-
-    //  происходит маппинг необходимых полей из сущности User и Ad в DTO объявления Ad
-
+    //  происходит маппинг сущностей UserEntity и AdEntity в DTO Ad
     @Mapping(source = "user.id", target = "author")
     @Mapping(source = "ad.image", target = "image")
     Ad toDTOAd(UserEntity user, AdEntity ad);
 
-
-    //  происходит маппинг необходимых полей из сущности User и Ad в DTO расширенного объявления ExtendedAd
+    //  происходит маппинг сущностей UserEntity и AdEntity в DTO  ExtendedAd
     @Mapping(source = "user.firstName", target = "authorFirstName")
     @Mapping(source = "user.lastName", target = "authorLastName")
     @Mapping(source = "ad.image", target = "image")

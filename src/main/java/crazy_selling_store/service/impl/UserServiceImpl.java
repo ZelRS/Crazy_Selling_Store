@@ -2,6 +2,7 @@ package crazy_selling_store.service.impl;
 
 import crazy_selling_store.dto.security.NewPassword;
 import crazy_selling_store.dto.users.UpdateUser;
+import crazy_selling_store.dto.users.User;
 import crazy_selling_store.entity.UserEntity;
 import crazy_selling_store.repository.UserRepository;
 import crazy_selling_store.service.UserService;
@@ -46,7 +47,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public crazy_selling_store.dto.users.User getUserInformation(Authentication authentication) {
+    public User getUserInformation(Authentication authentication) {
         UserEntity userFromDB;
         try {
             userFromDB = repository.findUserByEmail(authentication.getName())
