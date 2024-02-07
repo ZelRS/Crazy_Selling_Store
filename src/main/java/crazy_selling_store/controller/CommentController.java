@@ -32,6 +32,7 @@ public class CommentController {
         if (comments == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
+        log.info("Комментарии  объявления успешно получены");
         return ResponseEntity.ok(comments);
     }
 
@@ -40,10 +41,12 @@ public class CommentController {
     public ResponseEntity<Comment> createAdComment(@PathVariable("id") Integer id,
                                                    @RequestBody CreateOrUpdateComment text,
                                                    Authentication authentication) {
+        log.info("Попытка добавления комментария к объявлению");
         Comment comment = commentService.createAdComment(id, text, authentication);
         if (comment == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
+        log.info("Пользователь " + authentication.getName() + " успешно добавил комментарий");
         return ResponseEntity.ok(comment);
     }
 
@@ -52,7 +55,9 @@ public class CommentController {
     @PreAuthorize(value = "hasRole('ADMIN') or @commentServiceImpl.isCommentAuthor(authentication.getName(), #commentId)")
     public ResponseEntity<Void> deleteAdComment(@PathVariable("adId") Integer adId,
                                                 @PathVariable("commentId") Integer commentId) {
+        log.info("Попытка удаления комментария");
         commentService.deleteAdComment(adId, commentId);
+        log.info("Комментарий успешно удален");
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
@@ -62,10 +67,12 @@ public class CommentController {
     public ResponseEntity<Comment> updateAdComment(@PathVariable("adId") Integer adId,
                                                    @PathVariable("commentId") Integer commentId,
                                                    @RequestBody CreateOrUpdateComment text) {
+        log.info("Попытка обновления комментария");
         Comment comment = commentService.updateAdComment(adId, commentId, text);
         if (comment == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
+        log.info("Комментарий успешно обновлен");
         return ResponseEntity.ok(comment);
     }
 }
