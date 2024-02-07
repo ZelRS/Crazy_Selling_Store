@@ -56,7 +56,9 @@ public class CommentController {
     public ResponseEntity<Void> deleteAdComment(@PathVariable("adId") Integer adId,
                                                 @PathVariable("commentId") Integer commentId) {
         log.info("Попытка удаления комментария");
-        commentService.deleteAdComment(adId, commentId);
+        if (!commentService.deleteAdComment(adId, commentId)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
         log.info("Комментарий успешно удален");
         return ResponseEntity.status(HttpStatus.OK).build();
     }
