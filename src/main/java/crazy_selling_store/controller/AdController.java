@@ -29,6 +29,7 @@ import static org.springframework.http.MediaType.*;
 public class AdController {
     private final AdServiceImpl adService;
 
+
     @GetMapping(produces = APPLICATION_JSON_VALUE)
     @Operation(summary = "Получение всех объявлений")
     public ResponseEntity<Ads> getAllAds() {
@@ -67,7 +68,7 @@ public class AdController {
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Удаление объявления")
-    @PreAuthorize(value = "hasRole('ADMIN') or @adServiceImpl.isAdAuthor(authentication.getName(), #id)")
+    @PreAuthorize(value = "hasRole('ADMIN') or @authUserValidator.isAdAuthor(authentication.getName(), #id)")
     public ResponseEntity<Void> deleteAd(@PathVariable("id") Integer id) throws IOException {
         log.info("Попытка удаления объявления");
         adService.deleteAd(id);
@@ -77,7 +78,7 @@ public class AdController {
 
     @PatchMapping(value = "/{id}", produces = APPLICATION_JSON_VALUE)
     @Operation(summary = "Обновление информации об объявлении")
-    @PreAuthorize(value = "hasRole('ADMIN') or @adServiceImpl.isAdAuthor(authentication.getName(), #id)")
+    @PreAuthorize(value = "hasRole('ADMIN') or @authUserValidator.isAdAuthor(authentication.getName(), #id)")
     public ResponseEntity<Ad> updateAdInfo(@PathVariable("id") Integer id,
                                            @RequestBody CreateOrUpdateAd createOrUpdateAd) {
         log.info("Попытка изменения информации об объявлении \"" + createOrUpdateAd.getTitle() + "\"");
@@ -98,7 +99,7 @@ public class AdController {
             consumes = MULTIPART_FORM_DATA_VALUE,
             produces = APPLICATION_OCTET_STREAM_VALUE)
     @Operation(summary = "Обновление картинки объявления")
-    @PreAuthorize(value = "hasRole('ADMIN') or @adServiceImpl.isAdAuthor(authentication.getName(), #id)")
+    @PreAuthorize(value = "hasRole('ADMIN') or @authUserValidator.isAdAuthor(authentication.getName(), #id)")
     public ResponseEntity<byte[]> updateAdPhoto(@PathVariable("id") Integer id,
                                                 @RequestParam MultipartFile image) throws IOException {
         log.info("Попытка изменения изображения объявления");

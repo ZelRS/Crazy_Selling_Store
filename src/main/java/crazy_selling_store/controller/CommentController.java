@@ -52,7 +52,7 @@ public class CommentController {
 
     @DeleteMapping("/{adId}/comments/{commentId}")
     @Operation(summary = "Удаление комментария")
-    @PreAuthorize(value = "hasRole('ADMIN') or @commentServiceImpl.isCommentAuthor(authentication.getName(), #commentId)")
+    @PreAuthorize(value = "hasRole('ADMIN') or @authUserValidator.isCommentAuthor(authentication.getName(), #commentId)")
     public ResponseEntity<Void> deleteAdComment(@PathVariable("adId") Integer adId,
                                                 @PathVariable("commentId") Integer commentId) {
         log.info("Попытка удаления комментария");
@@ -63,7 +63,7 @@ public class CommentController {
 
     @PatchMapping(value = "/{adId}/comments/{commentId}", produces = APPLICATION_JSON_VALUE)
     @Operation(summary = "Обновление комментария")
-    @PreAuthorize(value = "hasRole('ADMIN') or @commentServiceImpl.isCommentAuthor(authentication.getName(), #commentId)")
+    @PreAuthorize(value = "hasRole('ADMIN') or @authUserValidator.isCommentAuthor(authentication.getName(), #commentId)")
     public ResponseEntity<Comment> updateAdComment(@PathVariable("adId") Integer adId,
                                                    @PathVariable("commentId") Integer commentId,
                                                    @RequestBody CreateOrUpdateComment text) {

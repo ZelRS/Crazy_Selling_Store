@@ -6,7 +6,6 @@ import crazy_selling_store.dto.comments.CreateOrUpdateComment;
 import crazy_selling_store.entity.AdEntity;
 import crazy_selling_store.entity.CommentEntity;
 import crazy_selling_store.entity.UserEntity;
-import crazy_selling_store.exceptions.EntityNotFoundException;
 import crazy_selling_store.repository.AdRepository;
 import crazy_selling_store.repository.CommentRepository;
 import crazy_selling_store.repository.UserRepository;
@@ -91,7 +90,7 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     @Override
     public Comment updateAdComment(Integer adId, Integer commentId,
-                                                                    CreateOrUpdateComment text) {
+                                   CreateOrUpdateComment text) {
         CommentEntity comment = commentRepository.getCommentByPk(commentId);
         AdEntity ad = adRepository.getAdByPk(adId);
         if (ad == null || comment == null) {
@@ -103,11 +102,5 @@ public class CommentServiceImpl implements CommentService {
         comment.setText(text.getText());
         commentRepository.save(comment);
         return INSTANCE.toDTOComment(comment.getUser(), comment);
-    }
-
-    public boolean isCommentAuthor(String username, Integer id) {
-        CommentEntity comment = commentRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Объявление не найдено"));
-        return comment.getUser().getEmail().equals(username);
     }
 }
