@@ -38,7 +38,7 @@ ALTER TABLE users
     ALTER COLUMN email      TYPE varchar(50),
     ALTER COLUMN first_name TYPE varchar(20),
 	ALTER COLUMN last_name  TYPE varchar(20),
-	ALTER COLUMN "password" TYPE varchar(50),
+	ALTER COLUMN "password" TYPE varchar(100),
 	ALTER COLUMN phone      TYPE varchar(20),
 	ALTER COLUMN "role"     TYPE varchar(50);
 ALTER TABLE ads
