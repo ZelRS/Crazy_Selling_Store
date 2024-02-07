@@ -1,6 +1,6 @@
 package crazy_selling_store.service.impl;
 
-import crazy_selling_store.entity.User;
+import crazy_selling_store.entity.UserEntity;
 import crazy_selling_store.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,7 +15,7 @@ public class SpecialUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findUserByEmail(username)
+        UserEntity user = userRepository.findUserByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User doesn't exists"));
         return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getEmail())

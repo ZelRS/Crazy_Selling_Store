@@ -1,10 +1,11 @@
 package crazy_selling_store.service.impl;
 
+import crazy_selling_store.dto.comments.Comment;
 import crazy_selling_store.dto.comments.Comments;
 import crazy_selling_store.dto.comments.CreateOrUpdateComment;
-import crazy_selling_store.entity.Ad;
-import crazy_selling_store.entity.Comment;
-import crazy_selling_store.entity.User;
+import crazy_selling_store.entity.AdEntity;
+import crazy_selling_store.entity.CommentEntity;
+import crazy_selling_store.entity.UserEntity;
 import crazy_selling_store.exceptions.EntityNotFoundException;
 import crazy_selling_store.repository.AdRepository;
 import crazy_selling_store.repository.CommentRepository;
@@ -34,12 +35,12 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Comments getAdComments(Integer id) {
-        Ad ad = adRepository.getAdByPk(id);
+        AdEntity ad = adRepository.getAdByPk(id);
         if (ad == null) {
             return null;
         }
-        List<crazy_selling_store.dto.comments.Comment> comments = new ArrayList<>();
-        for (Comment comment : ad.getComments()) {
+        List<Comment> comments = new ArrayList<>();
+        for (CommentEntity comment : ad.getComments()) {
             comments.add(INSTANCE.toDTOComment(comment.getUser(), comment));
         }
         return new Comments(comments.size(), comments);
@@ -47,20 +48,20 @@ public class CommentServiceImpl implements CommentService {
 
     @Transactional
     @Override
-    public crazy_selling_store.dto.comments.Comment createAdComment(Integer id, CreateOrUpdateComment text,
-                                                                    Authentication authentication) {
-        Ad ad = adRepository.getAdByPk(id);
+    public Comment createAdComment(Integer id, CreateOrUpdateComment text,
+                                   Authentication authentication) {
+        AdEntity ad = adRepository.getAdByPk(id);
         if (ad == null) {
             return null;
         }
-        Comment comment = new Comment();
+        CommentEntity comment = new CommentEntity();
         comment.setAd(ad);
         comment.setText(text.getText());
         LocalDateTime now = LocalDateTime.now();
         Long createdAt = now.toInstant(ZoneOffset.UTC).toEpochMilli();
         comment.setCreatedAt(createdAt);
 
-        User userFromDB = null;
+        UserEntity userFromDB = null;
         try {
             userFromDB = userRepository.findUserByEmail(authentication.getName())
                     .orElseThrow(() -> new UsernameNotFoundException("Пользователь не зарегистрирован"));
@@ -75,8 +76,8 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     @Override
     public boolean deleteAdComment(Integer adId, Integer commentId) {
-        Comment comment = commentRepository.getCommentByPk(commentId);
-        Ad ad = adRepository.getAdByPk(adId);
+        CommentEntity comment = commentRepository.getCommentByPk(commentId);
+        AdEntity ad = adRepository.getAdByPk(adId);
         if (ad == null || comment == null) {
             return false;
         }
@@ -89,10 +90,10 @@ public class CommentServiceImpl implements CommentService {
 
     @Transactional
     @Override
-    public crazy_selling_store.dto.comments.Comment updateAdComment(Integer adId, Integer commentId,
+    public Comment updateAdComment(Integer adId, Integer commentId,
                                                                     CreateOrUpdateComment text) {
-        Comment comment = commentRepository.getCommentByPk(commentId);
-        Ad ad = adRepository.getAdByPk(adId);
+        CommentEntity comment = commentRepository.getCommentByPk(commentId);
+        AdEntity ad = adRepository.getAdByPk(adId);
         if (ad == null || comment == null) {
             return null;
         }
@@ -105,7 +106,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     public boolean isCommentAuthor(String username, Integer id) {
-        Comment comment = commentRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        CommentEntity comment = commentRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         return comment.getUser().getEmail().equals(username);
     }
 }

@@ -1,9 +1,10 @@
 package crazy_selling_store.mapper;
 
+import crazy_selling_store.dto.ads.Ad;
 import crazy_selling_store.dto.ads.CreateOrUpdateAd;
 import crazy_selling_store.dto.ads.ExtendedAd;
-import crazy_selling_store.entity.Ad;
-import crazy_selling_store.entity.User;
+import crazy_selling_store.entity.AdEntity;
+import crazy_selling_store.entity.UserEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -20,7 +21,7 @@ public interface AdMapper {
 
 
     //  происходит маппинг DTO с единственным полем text в аналогичное поле сущности объявления Ad
-    Ad toEntityAd(CreateOrUpdateAd dto);
+    AdEntity toEntityAd(CreateOrUpdateAd dto);
 
 
 
@@ -37,12 +38,12 @@ public interface AdMapper {
 
     @Mapping(source = "user.id", target = "author")
     @Mapping(source = "ad.image", target = "image")
-    crazy_selling_store.dto.ads.Ad toDTOAd(User user, Ad ad);
+    Ad toDTOAd(UserEntity user, AdEntity ad);
 
 
     //  происходит маппинг необходимых полей из сущности User и Ad в DTO расширенного объявления ExtendedAd
     @Mapping(source = "user.firstName", target = "authorFirstName")
     @Mapping(source = "user.lastName", target = "authorLastName")
     @Mapping(source = "ad.image", target = "image")
-    ExtendedAd toDTOExtendedAd(User user, Ad ad);
+    ExtendedAd toDTOExtendedAd(UserEntity user, AdEntity ad);
 }

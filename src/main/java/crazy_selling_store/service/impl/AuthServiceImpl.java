@@ -1,6 +1,7 @@
 package crazy_selling_store.service.impl;
 
 import crazy_selling_store.dto.security.Register;
+import crazy_selling_store.entity.UserEntity;
 import crazy_selling_store.mapper.UserMapper;
 import crazy_selling_store.repository.UserRepository;
 import crazy_selling_store.service.AuthService;
@@ -47,7 +48,7 @@ public class AuthServiceImpl implements AuthService {
                     .username(register.getUsername())
                     .roles(register.getRole().name())
                     .build();
-            crazy_selling_store.entity.User user = UserMapper.INSTANCE.toEntityUser(register);
+            UserEntity user = UserMapper.INSTANCE.toEntityUser(register);
             user.setPassword(encoder.encode(register.getPassword()));
             repository.save(user);
             return true;

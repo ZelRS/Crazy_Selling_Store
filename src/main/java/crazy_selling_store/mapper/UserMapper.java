@@ -4,7 +4,7 @@ import crazy_selling_store.dto.security.Login;
 import crazy_selling_store.dto.security.NewPassword;
 import crazy_selling_store.dto.security.Register;
 import crazy_selling_store.dto.users.UpdateUser;
-import crazy_selling_store.entity.User;
+import crazy_selling_store.entity.UserEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -19,30 +19,30 @@ public interface UserMapper {
 //    User toEntityUser(crazy_selling_store.dto.users.User dto); данный маппинг возможно не понадобится
 
 
-    User toEntityUser(UpdateUser dto);
+    UserEntity toEntityUser(UpdateUser dto);
 
 
     @Mapping(source = "username", target = "email")
-    User toEntityUser(Login dto);
+    UserEntity toEntityUser(Login dto);
 
     @Mapping(source = "currentPassword", target = "password")
-    User toEntityUser(NewPassword dto);
+    UserEntity toEntityUser(NewPassword dto);
 
     @Mapping(source = "username", target = "email")
-    User toEntityUser(Register dto);
+    UserEntity toEntityUser(Register dto);
 
 
     //----------------------to DTO mappers--------------------------------
-    crazy_selling_store.dto.users.User toDTOUser(User user);
+    crazy_selling_store.dto.users.User toDTOUser(UserEntity user);
 
-    UpdateUser toDTOUpdateUser(User user);
+    UpdateUser toDTOUpdateUser(UserEntity user);
 
     @Mapping(source = "email", target = "username")
-    Login toDTOLogin(User user);
+    Login toDTOLogin(UserEntity user);
 
     @Mapping(source = "password", target = "newPassword")
-    NewPassword toDTONewPassword(User user);
+    NewPassword toDTONewPassword(UserEntity user);
 
     @Mapping(source = "email", target = "username")
-    Register toDTORegister(User user);
+    Register toDTORegister(UserEntity user);
 }

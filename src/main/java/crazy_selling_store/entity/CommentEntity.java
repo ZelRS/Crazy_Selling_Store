@@ -8,7 +8,7 @@ import javax.persistence.*;
 @Entity(name = "comments")
 @NoArgsConstructor
 @Data
-public class Comment {
+public class CommentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer pk;
@@ -16,9 +16,9 @@ public class Comment {
     private String text;
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private UserEntity user;
 
     @ManyToOne
     @JoinColumn(name = "ad_id")
-    private Ad ad;
+    private AdEntity ad;
 }

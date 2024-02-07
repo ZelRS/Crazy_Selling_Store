@@ -10,7 +10,7 @@ import java.util.Objects;
 @Entity(name = "users")
 @NoArgsConstructor
 @Data
-public class User {
+public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -24,16 +24,16 @@ public class User {
     private String password;
 
     @OneToMany (mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Ad> ads;
+    private List<AdEntity> ads;
 
     @OneToMany (mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Comment> comments;
+    private List<CommentEntity> comments;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof User)) return false;
-        User user = (User) o;
+        if (!(o instanceof UserEntity)) return false;
+        UserEntity user = (UserEntity) o;
         return Objects.equals(email, user.email);
     }
 

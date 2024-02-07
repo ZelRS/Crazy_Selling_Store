@@ -1,10 +1,11 @@
 package crazy_selling_store.service.impl;
 
+import crazy_selling_store.dto.ads.Ad;
 import crazy_selling_store.dto.ads.Ads;
 import crazy_selling_store.dto.ads.CreateOrUpdateAd;
 import crazy_selling_store.dto.ads.ExtendedAd;
-import crazy_selling_store.entity.Ad;
-import crazy_selling_store.entity.User;
+import crazy_selling_store.entity.AdEntity;
+import crazy_selling_store.entity.UserEntity;
 import crazy_selling_store.exceptions.EntityNotFoundException;
 import crazy_selling_store.repository.AdRepository;
 import crazy_selling_store.repository.UserRepository;
@@ -36,11 +37,11 @@ public class AdServiceImpl implements AdService {
 
     @Transactional
     @Override
-    public crazy_selling_store.dto.ads.Ad createAd(CreateOrUpdateAd properties,
-                                                   MultipartFile image,
-                                                   Authentication authentication) throws IOException {
-        Ad newAd = INSTANCE.toEntityAd(properties);
-        User userFromDB = null;
+    public Ad createAd(CreateOrUpdateAd properties,
+                       MultipartFile image,
+                       Authentication authentication) throws IOException {
+        AdEntity newAd = INSTANCE.toEntityAd(properties);
+        UserEntity userFromDB = null;
         try {
             if (authentication != null) {
                 userFromDB = userRepository.findUserByEmail(authentication.getName())
@@ -75,7 +76,7 @@ public class AdServiceImpl implements AdService {
     @Override
     public Ads getAllAds() {
         List<crazy_selling_store.dto.ads.Ad> adsList = new ArrayList<>();
-        for (Ad ad : adRepository.findAll()) {
+        for (AdEntity ad : adRepository.findAll()) {
             adsList.add(INSTANCE.toDTOAd(ad.getUser(), ad));
         }
         return new Ads(adsList.size(), adsList);
@@ -84,7 +85,7 @@ public class AdServiceImpl implements AdService {
     @Transactional
     @Override
     public Ads getAuthUserAds(Authentication authentication) {
-        User userFromDB = null;
+        UserEntity userFromDB = null;
         try {
             userFromDB = userRepository.findUserByEmail(authentication.getName())
                     .orElseThrow(() -> new UsernameNotFoundException("Пользователь не зарегистрирован"));
@@ -92,7 +93,7 @@ public class AdServiceImpl implements AdService {
             log.info("Пользователь не зарегистрирован");
         }
         List<crazy_selling_store.dto.ads.Ad> adsList = new ArrayList<>();
-        for (Ad ad : adRepository.findByUser(userFromDB)) {
+        for (AdEntity ad : adRepository.findByUser(userFromDB)) {
             adsList.add(INSTANCE.toDTOAd(ad.getUser(), ad));
         }
         return new Ads(adsList.size(), adsList);
@@ -100,18 +101,18 @@ public class AdServiceImpl implements AdService {
 
     @Override
     public ExtendedAd getAdFullInfo(Integer id) {
-        Ad ad = adRepository.getAdByPk(id);
+        AdEntity ad = adRepository.getAdByPk(id);
         if (ad == null) {
             return null;
         }
-        User user = ad.getUser();
+        UserEntity user = ad.getUser();
         return INSTANCE.toDTOExtendedAd(user, ad);
     }
 
     @Transactional
     @Override
     public void deleteAd(Integer id) throws IOException {
-        Ad ad = adRepository.getAdByPk(id);
+        AdEntity ad = adRepository.getAdByPk(id);
         Path path = Path.of(ad.getImage());
         Files.delete(path);
         adRepository.deleteByPk(id);
@@ -120,8 +121,8 @@ public class AdServiceImpl implements AdService {
 //    необходимо добавить логику переименования изображения и пути до файла, чтобы они корректно удалялись с сервера
     @Transactional
     @Override
-    public crazy_selling_store.dto.ads.Ad updateAdInfo(Integer id, CreateOrUpdateAd createOrUpdateAd) {
-        Ad ad = adRepository.getAdByPk(id);
+    public Ad updateAdInfo(Integer id, CreateOrUpdateAd createOrUpdateAd) {
+        AdEntity ad = adRepository.getAdByPk(id);
 
 
 
@@ -134,7 +135,7 @@ public class AdServiceImpl implements AdService {
 
     @Override
     public byte[] updateAdPhoto(Integer id, MultipartFile image) throws IOException {
-        Ad ad = adRepository.getAdByPk(id);
+        AdEntity ad = adRepository.getAdByPk(id);
         String fileURL = ad.getImage();
         Path path = Path.of(fileURL);
         Files.deleteIfExists(path);
@@ -150,7 +151,7 @@ public class AdServiceImpl implements AdService {
     }
 
     public boolean isAdAuthor(String username, Integer id) {
-        Ad ad = adRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        AdEntity ad = adRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         return ad.getUser().getEmail().equals(username);
     }
 }

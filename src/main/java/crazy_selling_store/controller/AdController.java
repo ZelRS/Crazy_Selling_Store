@@ -58,7 +58,6 @@ public class AdController {
         return ResponseEntity.ok(extendedAd);
     }
 
-
     @DeleteMapping("/{id}")
     @Operation(summary = "Удаление объявления")
     @PreAuthorize(value = "hasRole('ADMIN') or @adServiceImpl.isAdAuthor(authentication.getName(), #id)")
