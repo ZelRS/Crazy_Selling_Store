@@ -45,3 +45,7 @@ ALTER TABLE ads
     ALTER COLUMN title      TYPE varchar(100);
 ALTER TABLE "comments"
     ALTER COLUMN "text"     TYPE varchar(2000);
+
+--changeset RomanZelenin:1
+ALTER TABLE comments
+    ADD COLUMN ad_id int4 NULL;

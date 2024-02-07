@@ -3,11 +3,12 @@ package crazy_selling_store.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity(name = "ads")
 @NoArgsConstructor
 @Data
-public class Ad {
+public class AdEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer pk;
@@ -18,5 +19,8 @@ public class Ad {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private UserEntity user;
+
+    @OneToMany (mappedBy = "ad", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CommentEntity> comments;
 }
