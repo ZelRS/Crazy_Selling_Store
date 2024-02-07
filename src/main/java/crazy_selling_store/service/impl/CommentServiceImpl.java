@@ -5,6 +5,7 @@ import crazy_selling_store.dto.comments.CreateOrUpdateComment;
 import crazy_selling_store.entity.Ad;
 import crazy_selling_store.entity.Comment;
 import crazy_selling_store.entity.User;
+import crazy_selling_store.exceptions.EntityNotFoundException;
 import crazy_selling_store.repository.AdRepository;
 import crazy_selling_store.repository.CommentRepository;
 import crazy_selling_store.repository.UserRepository;
@@ -34,6 +35,9 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Comments getAdComments(Integer id) {
         Ad ad = adRepository.getAdByPk(id);
+        if (ad == null) {
+            return null;
+        }
         List<crazy_selling_store.dto.comments.Comment> comments = new ArrayList<>();
         for (Comment comment : ad.getComments()) {
             comments.add(INSTANCE.toDTOComment(comment.getUser(), comment));
@@ -98,5 +102,10 @@ public class CommentServiceImpl implements CommentService {
         comment.setText(text.getText());
         commentRepository.save(comment);
         return INSTANCE.toDTOComment(comment.getUser(), comment);
+    }
+
+    public boolean isCommentAuthor(String username, Integer id) {
+        Comment comment = commentRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        return comment.getUser().getEmail().equals(username);
     }
 }

@@ -42,8 +42,12 @@ public class AdServiceImpl implements AdService {
         Ad newAd = INSTANCE.toEntityAd(properties);
         User userFromDB = null;
         try {
-            userFromDB = userRepository.findUserByEmail(authentication.getName())
-                    .orElseThrow(() -> new UsernameNotFoundException("Пользователь не зарегистрирован"));
+            if (authentication != null) {
+                userFromDB = userRepository.findUserByEmail(authentication.getName())
+                        .orElseThrow(() -> new UsernameNotFoundException("Пользователь не зарегистрирован"));
+            } else {
+                return null;
+            }
         } catch (UsernameNotFoundException e) {
             log.info("Пользователь не зарегистрирован");
         }

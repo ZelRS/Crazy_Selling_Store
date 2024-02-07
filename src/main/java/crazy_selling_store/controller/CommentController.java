@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,11 +27,8 @@ public class CommentController {
 
     @GetMapping(value = "/{id}/comments", produces = APPLICATION_JSON_VALUE)
     @Operation(summary = "Получение комментариев объявления")
-    public ResponseEntity<Comments> getAdComments(@PathVariable("id") Integer id, Authentication authentication) {
+    public ResponseEntity<Comments> getAdComments(@PathVariable("id") Integer id) {
         Comments comments = commentService.getAdComments(id);
-        if (!authentication.isAuthenticated()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
         if (comments == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
@@ -43,9 +41,6 @@ public class CommentController {
                                                    @RequestBody CreateOrUpdateComment text,
                                                    Authentication authentication) {
         Comment comment = commentService.createAdComment(id, text, authentication);
-        if (!authentication.isAuthenticated()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
         if (comment == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
@@ -54,28 +49,20 @@ public class CommentController {
 
     @DeleteMapping("/{adId}/comments/{commentId}")
     @Operation(summary = "Удаление комментария")
+    @PreAuthorize(value = "hasRole('ADMIN') or @commentServiceImpl.isCommentAuthor(authentication.getName(), #commentId)")
     public ResponseEntity<Void> deleteAdComment(@PathVariable("adId") Integer adId,
-                                                @PathVariable("commentId") Integer commentId,
-                                                Authentication authentication) {
-        if (!authentication.isAuthenticated()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        if (!commentService.deleteAdComment(adId, commentId)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
+                                                @PathVariable("commentId") Integer commentId) {
+        commentService.deleteAdComment(adId, commentId);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @PatchMapping(value = "/{adId}/comments/{commentId}", produces = APPLICATION_JSON_VALUE)
     @Operation(summary = "Обновление комментария")
+    @PreAuthorize(value = "hasRole('ADMIN') or @commentServiceImpl.isCommentAuthor(authentication.getName(), #commentId)")
     public ResponseEntity<Comment> updateAdComment(@PathVariable("adId") Integer adId,
                                                    @PathVariable("commentId") Integer commentId,
-                                                   @RequestBody CreateOrUpdateComment text,
-                                                   Authentication authentication) {
+                                                   @RequestBody CreateOrUpdateComment text) {
         Comment comment = commentService.updateAdComment(adId, commentId, text);
-        if (!authentication.isAuthenticated()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
         if (comment == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }

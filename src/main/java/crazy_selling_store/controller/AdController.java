@@ -29,34 +29,29 @@ import static org.springframework.http.MediaType.*;
 public class AdController {
     private final AdServiceImpl adService;
 
-    //полностью исправен
     @GetMapping(produces = APPLICATION_JSON_VALUE)
     @Operation(summary = "Получение всех объявлений")
     public ResponseEntity<Ads> getAllAds() {
         return ResponseEntity.ok(adService.getAllAds());
     }
 
-    //полностью исправен
     @PostMapping(consumes = MULTIPART_FORM_DATA_VALUE, produces = APPLICATION_JSON_VALUE)
     @Operation(summary = "Добавление объявления")
     public ResponseEntity<Ad> createAd(@ModelAttribute CreateOrUpdateAd properties,
                                        @RequestPart MultipartFile image,
                                        Authentication authentication) throws IOException {
-        if (!authentication.isAuthenticated()) {
+        Ad ad = adService.createAd(properties, image, authentication);
+        if (ad == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(adService.createAd(properties, image, authentication));
+        return ResponseEntity.status(HttpStatus.CREATED).body(ad);
 
     }
 
-    //полностью исправен
     @GetMapping(value = "/{id}", produces = APPLICATION_JSON_VALUE)
     @Operation(summary = "Получение информации об объявлении")
-    public ResponseEntity<ExtendedAd> getAdFullInfo(@PathVariable("id") Integer id, Authentication authentication) {
+    public ResponseEntity<ExtendedAd> getAdFullInfo(@PathVariable("id") Integer id) {
         ExtendedAd extendedAd = adService.getAdFullInfo(id);
-        if (!authentication.isAuthenticated()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
         if (extendedAd == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
@@ -64,56 +59,38 @@ public class AdController {
     }
 
 
-    //полностью исправен
     @DeleteMapping("/{id}")
     @Operation(summary = "Удаление объявления")
     @PreAuthorize(value = "hasRole('ADMIN') or @adServiceImpl.isAdAuthor(authentication.getName(), #id)")
-    public ResponseEntity<Void> deleteAd(@PathVariable("id") Integer id, Authentication authentication) throws IOException {
-        if (!authentication.isAuthenticated()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+    public ResponseEntity<Void> deleteAd(@PathVariable("id") Integer id) throws IOException {
         adService.deleteAd(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    //полностью исправен
     @PatchMapping(value = "/{id}", produces = APPLICATION_JSON_VALUE)
     @Operation(summary = "Обновление информации об объявлении")
     @PreAuthorize(value = "hasRole('ADMIN') or @adServiceImpl.isAdAuthor(authentication.getName(), #id)")
     public ResponseEntity<Ad> updateAdInfo(@PathVariable("id") Integer id,
-                                           @RequestBody CreateOrUpdateAd createOrUpdateAd,
-                                           Authentication authentication) {
+                                           @RequestBody CreateOrUpdateAd createOrUpdateAd) {
         Ad ad = adService.updateAdInfo(id, createOrUpdateAd);
-        if (!authentication.isAuthenticated()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
         return ResponseEntity.ok(ad);
     }
 
-    //полностью исправен
     @GetMapping(value = "/me", produces = APPLICATION_JSON_VALUE)
     @Operation(summary = "Получение объявлений авторизованного пользователя")
     public ResponseEntity<Ads> getAuthUserAds(Authentication authentication) {
-        if (!authentication.isAuthenticated()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
         return ResponseEntity.ok(adService.getAuthUserAds(authentication));
 
     }
 
-    //полностью исправен
     @PatchMapping(value = "/{id}/image",
             consumes = MULTIPART_FORM_DATA_VALUE,
             produces = APPLICATION_OCTET_STREAM_VALUE)
     @Operation(summary = "Обновление картинки объявления")
     @PreAuthorize(value = "hasRole('ADMIN') or @adServiceImpl.isAdAuthor(authentication.getName(), #id)")
     public ResponseEntity<byte[]> updateAdPhoto(@PathVariable("id") Integer id,
-                                                @RequestParam MultipartFile image,
-                                                Authentication authentication) throws IOException {
+                                                @RequestParam MultipartFile image) throws IOException {
         byte[] imageBytes = adService.updateAdPhoto(id, image);
-        if (!authentication.isAuthenticated()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
         return ResponseEntity.ok(imageBytes);
     }
 }
