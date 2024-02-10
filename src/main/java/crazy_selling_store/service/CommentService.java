@@ -6,6 +6,7 @@ import crazy_selling_store.dto.comments.CreateOrUpdateComment;
 import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 
+//интерфейс сервиса для обработки комментариев
 public interface CommentService {
     Comments getAdComments(Integer id);
 

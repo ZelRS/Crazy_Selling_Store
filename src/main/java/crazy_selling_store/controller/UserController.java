@@ -88,7 +88,7 @@ public class UserController {
     }
 
     @Operation(
-            summary = "ОБновление информации об авторизованном пользователе",
+            summary = "Обновление информации об авторизованном пользователе",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
@@ -127,9 +127,12 @@ public class UserController {
     @PatchMapping(value = "/me/image", consumes = MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> updateUserAvatar(@RequestParam("image") MultipartFile image,
                                                    Authentication authentication) throws IOException {
+        log.info("Попытка смены аватара (Пользователь:  " + authentication.getName() + ")");
         if (!userService.updateUserAvatar(image, authentication)) {
+            log.info("Пользователь не авторизован");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+        log.info("Аватар успешно обновлен (Пользователь:  " + authentication.getName() + ")");
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

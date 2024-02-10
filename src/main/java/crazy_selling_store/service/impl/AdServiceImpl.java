@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -25,14 +25,15 @@ import java.util.List;
 import java.util.Objects;
 
 import static crazy_selling_store.mapper.AdMapper.INSTANCE;
-import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
+//сервисный класс для обработки объявлений
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class AdServiceImpl implements AdService {
     private final AdRepository adRepository;
     private final UserRepository userRepository;
+    private final UploadImageService uploadImageService;
 
     @Transactional
     @Override
@@ -42,10 +43,10 @@ public class AdServiceImpl implements AdService {
         //получаем сущность из DTO
         AdEntity adEntity = INSTANCE.toEntityAd(properties);
         //получаем зарегистрированного пользователя по email
-        UserEntity userFromDB = null;
+        UserEntity userEntity = null;
         try {
             if (authentication != null) {
-                userFromDB = userRepository.findUserByEmail(authentication.getName())
+                userEntity = userRepository.findUserByEmail(authentication.getName())
                         .orElseThrow(() -> new UsernameNotFoundException("Пользователь не зарегистрирован"));
             } else {
                 //если пользователь оказался не зарегистрированным возвращаем из метода null
@@ -55,17 +56,22 @@ public class AdServiceImpl implements AdService {
             log.info("Пользователь не зарегистрирован");
         }
         //добавляем пользователя к объявлению
-        adEntity.setUser(userFromDB);
-        //формируем директорию и имя для хранения загружаемой фотографии объявления
+        adEntity.setUser(userEntity);
+        //формируем строку с путем для хранения фото
         String imageDir = "src/main/resources/adImages";
+        //формируем строку с оригинальным названием фото
         String origFilename = image.getOriginalFilename();
+        //проверяем строку на null
         assert origFilename != null;
+        //формируем строку с названием сохраненного файла на сервере
         String imageFinishName = properties.getTitle() + "." +
                 Objects.requireNonNull(origFilename.substring(origFilename.lastIndexOf(".") + 1));
+        //формируем путь
         Path filePath = Path.of(imageDir, imageFinishName);
+        //создаем директорию на сервере
         Files.createDirectories(filePath.getParent());
         // загрузка фото по указанному пути
-        uploadImage(image, filePath);
+        uploadImageService.uploadImage(image, filePath);
         // сохраняем URL фотографии в таблицу объявления
         adEntity.setImage(imageDir + "/" + imageFinishName);
         //сохраняем объявление в БД
@@ -90,9 +96,9 @@ public class AdServiceImpl implements AdService {
     @Override
     public Ads getAuthUserAds(Authentication authentication) {
         //получаем зарегистрированного пользователя по email
-        UserEntity userFromDB = null;
+        UserEntity userEntity = null;
         try {
-            userFromDB = userRepository.findUserByEmail(authentication.getName())
+            userEntity = userRepository.findUserByEmail(authentication.getName())
                     .orElseThrow(() -> new UsernameNotFoundException("Пользователь не зарегистрирован"));
         } catch (UsernameNotFoundException e) {
             log.info("Пользователь не зарегистрирован");
@@ -100,7 +106,7 @@ public class AdServiceImpl implements AdService {
         //формируем список DTO объявлений
         List<Ad> adsList = new ArrayList<>();
         // проходим по списку сущностей объявления, полученному из БД по пользователю и преобразуем каждое объявление в DTO
-        for (AdEntity ad : adRepository.findByUser(userFromDB)) {
+        for (AdEntity ad : adRepository.findByUser(userEntity)) {
             adsList.add(INSTANCE.toDTOAd(ad.getUser(), ad));
         }
         //формируем возвращаем в метод контроллера DTO списка объявлений и их количества(Ads)
@@ -161,23 +167,9 @@ public class AdServiceImpl implements AdService {
         //получаем URL фото из БД
         Path path = Path.of(ad.getImage());
         // загрузка фото по указанному пути
-        uploadImage(image, path);
+        uploadImageService.uploadImage(image, path);
         //считываем массив байт фотографии и возвращаем его в метод контроллера
         return Files.readAllBytes(path);
-    }
-
-    //метод загрузки фото по указанному пути на сервер
-    private void uploadImage(MultipartFile image, Path path) throws IOException {
-        //если фото по этому пути с таким именем уже существует, то оно удаляется
-        Files.deleteIfExists(path);
-        //try с ресурсами с буферизацией загружает фото по заданному пути и автоматически закрывает потоки
-        try (InputStream is = image.getInputStream();
-             OutputStream os = Files.newOutputStream(path, CREATE_NEW);
-             BufferedInputStream bis = new BufferedInputStream(is, 1024);
-             BufferedOutputStream bos = new BufferedOutputStream(os, 1024)
-        ) {
-            bis.transferTo(bos);
-        }
     }
 }
 

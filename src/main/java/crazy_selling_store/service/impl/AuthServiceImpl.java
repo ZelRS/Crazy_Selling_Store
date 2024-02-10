@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+//сервисный класс для обработки авторизации и входа пользователя
 @Slf4j
 @Service
 @RequiredArgsConstructor

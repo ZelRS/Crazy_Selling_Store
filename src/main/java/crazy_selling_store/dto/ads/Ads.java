@@ -5,6 +5,7 @@ import lombok.Data;
 
 import java.util.List;
 
+//DTO списка объявлений
 @Data
 @AllArgsConstructor
 public class Ads {

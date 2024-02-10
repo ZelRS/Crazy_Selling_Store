@@ -15,12 +15,14 @@ public class AuthUserValidator {
     private final AdRepository adRepository;
     private final CommentRepository commentRepository;
 
+    //валидация пользователя при работе с объявлениями
     public boolean isAdAuthor(String username, Integer id) {
         AdEntity ad = adRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Объявление не найдено"));
         return ad.getUser().getEmail().equals(username);
     }
 
+    //валидация пользователя при работе с комментариями
     public boolean isCommentAuthor(String username, Integer id) {
         CommentEntity comment = commentRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Объявление не найдено"));
