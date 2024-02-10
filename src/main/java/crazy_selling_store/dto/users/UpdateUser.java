@@ -5,6 +5,7 @@ import lombok.Data;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+//DTO для обновления данных пользователя
 @Data
 public class UpdateUser {
     @Size(min = 3, max = 10)

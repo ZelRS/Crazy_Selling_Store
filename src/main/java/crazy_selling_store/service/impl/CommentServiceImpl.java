@@ -24,6 +24,7 @@ import java.util.List;
 
 import static crazy_selling_store.mapper.CommentMapper.INSTANCE;
 
+//сервисный класс для обработки комментариев
 @Service
 @Slf4j
 @RequiredArgsConstructor

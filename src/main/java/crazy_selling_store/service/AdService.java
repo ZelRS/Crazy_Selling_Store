@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
+//интерфейс сервиса для обработки объявлений
 public interface AdService {
     @Transactional
     Ad createAd(CreateOrUpdateAd properties, MultipartFile image, Authentication authentication) throws IOException;

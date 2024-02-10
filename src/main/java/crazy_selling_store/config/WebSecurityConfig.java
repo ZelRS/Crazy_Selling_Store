@@ -10,9 +10,11 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
+// конфигурационный класс для создания бинов с настройкой аутентификации и хешированием паролей
 @Configuration
 @EnableMethodSecurity
 public class WebSecurityConfig {
+    //"белый лист" - эндпоинты, для которых не проверяются права доступа
     private static final String[] AUTH_WHITELIST = {
             "/swagger-resources/**",
             "/swagger-ui.html",
@@ -23,6 +25,7 @@ public class WebSecurityConfig {
             "/ads"
     };
 
+    //бин настройки фильтра аутентификации
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf()
@@ -30,8 +33,10 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(
                         authorization ->
                                 authorization
+                                        //для "белого листа" полностью разрешен доступ без проверки прав
                                         .mvcMatchers(AUTH_WHITELIST)
                                         .permitAll()
+                                        //для эндпоинтов ниже требуется аутентификация
                                         .mvcMatchers("/ads/**", "/users/**")
                                         .authenticated())
                 .cors()
@@ -40,6 +45,7 @@ public class WebSecurityConfig {
         return http.build();
     }
 
+    // бин предназначенный для хэширования паролей в целях безопасности
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

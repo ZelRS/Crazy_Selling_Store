@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+//сущность комментария для БД
 @Entity(name = "comments")
 @NoArgsConstructor
 @Data

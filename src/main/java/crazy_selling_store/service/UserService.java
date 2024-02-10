@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
+//интерфейс сервиса для обработки пользователей
 public interface UserService {
     @Transactional
     boolean setPassword(NewPassword newPassword, Authentication authentication);

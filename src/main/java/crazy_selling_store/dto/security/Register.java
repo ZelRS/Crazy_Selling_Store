@@ -7,6 +7,7 @@ import lombok.Data;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+//DTO для регистрации пользователя
 @Data
 @AllArgsConstructor
 public class Register {

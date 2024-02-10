@@ -5,6 +5,7 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.List;
 
+//сущность пользователя для БД
 @Entity(name = "ads")
 @NoArgsConstructor
 @Data

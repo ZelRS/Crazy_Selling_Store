@@ -3,6 +3,9 @@ package crazy_selling_store.controller;
 import crazy_selling_store.dto.security.Login;
 import crazy_selling_store.dto.security.Register;
 import crazy_selling_store.service.AuthService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +23,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
     private final AuthService authService;
 
+    @Operation(
+            summary = "Авторизация",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "OK",
+                            content = @Content()),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "Unauthorized",
+                            content = @Content())})
     @PostMapping("/login")
     @Tag(name = "Авторизация")
     public ResponseEntity<?> login(@RequestBody Login login) {
@@ -33,6 +47,17 @@ public class AuthController {
         }
     }
 
+    @Operation(
+            summary = "Авторизация",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "201",
+                            description = "Created",
+                            content = @Content()),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Bad request",
+                            content = @Content())})
     @PostMapping("/register")
     @Tag(name = "Регистрация")
     public ResponseEntity<?> register(@RequestBody Register register) {

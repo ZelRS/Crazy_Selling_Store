@@ -5,12 +5,15 @@ import crazy_selling_store.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface AdRepository extends JpaRepository<AdEntity, Integer> {
 
     List<AdEntity> findByUser(UserEntity user);
 
     AdEntity getAdByPk(Integer id);
+
+    Optional<AdEntity> findByPk(Integer pk);
 
     void deleteByPk(Integer id);
 }
