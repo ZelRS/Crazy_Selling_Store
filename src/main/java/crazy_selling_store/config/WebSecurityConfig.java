@@ -22,7 +22,8 @@ public class WebSecurityConfig {
             "/webjars/**",
             "/login",
             "/register",
-            "/ads"
+            "/ads",
+            "/src/**"
     };
 
     //бин настройки фильтра аутентификации
