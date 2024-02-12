@@ -57,14 +57,16 @@ public class AdServiceImpl implements AdService {
         }
         //добавляем пользователя к объявлению
         adEntity.setUser(userEntity);
+        //первично сохраняем объфвление в БД для формирования id
+        adRepository.save(adEntity);
         //формируем строку с путем для хранения фото
-        String imageDir = "src/main/resources/adImages";
+        String imageDir = "src/main/resources/adImages/";
         //формируем строку с оригинальным названием фото
         String origFilename = image.getOriginalFilename();
         //проверяем строку на null
         assert origFilename != null;
         //формируем строку с названием сохраненного файла на сервере
-        String imageFinishName = properties.getTitle() + "." +
+        String imageFinishName = adEntity.getPk() + "." +
                 Objects.requireNonNull(origFilename.substring(origFilename.lastIndexOf(".") + 1));
         //формируем путь
         Path filePath = Path.of(imageDir, imageFinishName);
@@ -73,8 +75,8 @@ public class AdServiceImpl implements AdService {
         // загрузка фото по указанному пути
         uploadImageService.uploadImage(image, filePath);
         // сохраняем URL фотографии в таблицу объявления
-        adEntity.setImage(imageDir + "/" + imageFinishName);
-        //сохраняем объявление в БД
+        adEntity.setImage("/" + imageDir + imageFinishName);
+        //повторно сохраняем объвление в БД для сеттинга фото
         adRepository.save(adEntity);
         //преобразуем сформированные сущности пользователя и объявления в DTO и возвращаем его в метод контроллера
         return INSTANCE.toDTOAd(adEntity.getUser(), adEntity);
@@ -133,8 +135,15 @@ public class AdServiceImpl implements AdService {
         //получаем сущность из БД по id
         AdEntity ad = adRepository.getAdByPk(id);
         //получаем URL фото из БД
-        Path path = Path.of(ad.getImage());
-        //удаляем фото с сервера по URL
+        String startURL = ad.getImage();
+        //с помощью билдера удаляем первый слэш в URL
+        StringBuilder sb = new StringBuilder(startURL);
+        if (sb.length() > 0) {
+            sb.deleteCharAt(0);
+        }
+        //формируем корректный путь
+        Path path = Path.of(sb.toString());
+        //удаляем фото с сервера по этому пути
         Files.delete(path);
         //удаляем объявление из БД
         adRepository.deleteByPk(id);
@@ -165,7 +174,14 @@ public class AdServiceImpl implements AdService {
         //получаем сущность из БД по id
         AdEntity ad = adRepository.getAdByPk(id);
         //получаем URL фото из БД
-        Path path = Path.of(ad.getImage());
+        String startURL = ad.getImage();
+        //с помощью билдера удаляем первый слэш в URL
+        StringBuilder sb = new StringBuilder(startURL);
+        if (sb.length() > 0) {
+            sb.deleteCharAt(0);
+        }
+        //формируем корректный путь
+        Path path = Path.of(sb.toString());
         // загрузка фото по указанному пути
         uploadImageService.uploadImage(image, path);
         //считываем массив байт фотографии и возвращаем его в метод контроллера

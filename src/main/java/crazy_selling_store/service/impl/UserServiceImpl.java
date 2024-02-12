@@ -100,7 +100,7 @@ public class UserServiceImpl implements UserService {
 
         }
         //формируем строку с путем для хранения аватаров
-        String imageDir = "src/main/resources/userAvatars";
+        String imageDir = "src/main/resources/userAvatars/";
         //формируем строку с оригинальным названием файла
         String origFilename = image.getOriginalFilename();
         //проверяем строку на null
@@ -115,7 +115,7 @@ public class UserServiceImpl implements UserService {
         //загружаем фото по указанному пути на сервер
         uploadImageService.uploadImage(image, filePath);
         //сеттим URL аватара в сущность
-        userEntity.setImage(imageDir + savedFileName);
+        userEntity.setImage("/" + imageDir + savedFileName);
         //сохраняем пользователя в БД
         repository.save(userEntity);
         return true;
