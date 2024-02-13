@@ -1,47 +1,60 @@
 package crazy_selling_store.service.impl;
 
-import crazy_selling_store.dto.Register;
+import crazy_selling_store.dto.security.Register;
+import crazy_selling_store.entity.UserEntity;
+import crazy_selling_store.mapper.UserMapper;
+import crazy_selling_store.repository.UserRepository;
+import crazy_selling_store.service.AuthService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
-import crazy_selling_store.service.AuthService;
 
+//сервисный класс для обработки авторизации и входа пользователя
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
-
-    private final UserDetailsManager manager;
     private final PasswordEncoder encoder;
-
-    public AuthServiceImpl(UserDetailsManager manager,
-                           PasswordEncoder passwordEncoder) {
-        this.manager = manager;
-        this.encoder = passwordEncoder;
-    }
+    private final SpecialUserDetailsService manager;
+    private final UserRepository repository;
 
     @Override
     public boolean login(String userName, String password) {
-        if (!manager.userExists(userName)) {
+        UserDetails userDetails;
+        try {
+            userDetails = manager.loadUserByUsername(userName);
+        } catch (UsernameNotFoundException e) {
+            log.info("Не зарегистрирован (Пользователь: " + userName + ")");
             return false;
         }
-        UserDetails userDetails = manager.loadUserByUsername(userName);
-        return encoder.matches(password, userDetails.getPassword());
+        if (!encoder.matches(password, userDetails.getPassword())) {
+            log.info("Введен не верный пароль (Пользователь: " + userName + ")");
+            return false;
+        }
+        return true;
     }
 
     @Override
     public boolean register(Register register) {
-        if (manager.userExists(register.getUsername())) {
-            return false;
+        try {
+            manager.loadUserByUsername(register.getUsername());
+        } catch (UsernameNotFoundException e) {
+            User.builder()
+                    .passwordEncoder(this.encoder::encode)
+                    .password(register.getPassword())
+                    .username(register.getUsername())
+                    .roles(register.getRole().name())
+                    .build();
+            UserEntity user = UserMapper.INSTANCE.toEntityUser(register);
+            user.setPassword(encoder.encode(register.getPassword()));
+            repository.save(user);
+            return true;
         }
-        manager.createUser(
-                User.builder()
-                        .passwordEncoder(this.encoder::encode)
-                        .password(register.getPassword())
-                        .username(register.getUsername())
-                        .roles(register.getRole().name())
-                        .build());
-        return true;
+        log.info("Уже зарегистрирован (Пользователь: " + register.getUsername() + ")");
+        return false;
     }
-
 }
