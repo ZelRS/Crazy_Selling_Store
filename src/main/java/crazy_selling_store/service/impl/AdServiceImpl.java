@@ -149,16 +149,11 @@ public class AdServiceImpl implements AdService {
         adRepository.deleteByPk(id);
     }
 
-
-    //МЕТОД ДОРАБАТЫВАЕТСЯ
     @Transactional
     @Override
     public Ad updateAdInfo(Integer id, CreateOrUpdateAd createOrUpdateAd) {
         //получаем сущность из БД по id
         AdEntity ad = adRepository.getAdByPk(id);
-
-        // !!! тут необходимо добавить логику переименования изображения и пути до файла, чтобы они корректно удалялись с сервера
-
         // сеттим в сущность необходимые поля из DTO CreateOrUpdateAd
         ad.setTitle(createOrUpdateAd.getTitle());
         ad.setPrice(createOrUpdateAd.getPrice());
