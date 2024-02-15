@@ -19,7 +19,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-
+/**
+ * Контроллер для работы с комментариями объявлений.
+ */
 @RestController
 @Slf4j
 @RequiredArgsConstructor
@@ -28,7 +30,12 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @Tag(name = "Комментарии")
 public class CommentController {
     private final CommentServiceImpl commentService;
-
+    /**
+     * Получает комментарии для указанного объявления.
+     *
+     * @param id Идентификатор объявления.
+     * @return ответ с комментариями объявления.
+     */
     @Operation(
             summary = "Получение комментариев объявления",
             responses = {
@@ -56,7 +63,14 @@ public class CommentController {
         log.info("Комментарии  объявления успешно получены");
         return ResponseEntity.ok(comments);
     }
-
+    /**
+     * Создает комментарий для указанного объявления.
+     *
+     * @param id             Идентификатор объявления.
+     * @param text           Текст комментария.
+     * @param authentication Аутентификационные данные пользователя.
+     * @return ответ с созданным комментарием.
+     */
     @Operation(
             summary = "Добавление комментария к объявлению",
             responses = {
@@ -87,7 +101,13 @@ public class CommentController {
         log.info("Пользователь " + authentication.getName() + " успешно добавил комментарий");
         return ResponseEntity.ok(comment);
     }
-
+    /**
+     * Удаляет комментарий для указанного объявления.
+     *
+     * @param adId           Идентификатор объявления.
+     * @param commentId      Идентификатор комментария.
+     * @return ответ с кодом состояния в зависимости от результата удаления.
+     */
     @Operation(
             summary = "Удаление комментария",
             responses = {
@@ -118,7 +138,14 @@ public class CommentController {
         log.info("Комментарий успешно удален");
         return ResponseEntity.status(HttpStatus.OK).build();
     }
-
+    /**
+     * Обновляет комментарий для указанного объявления.
+     *
+     * @param adId                  Идентификатор объявления.
+     * @param commentId             Идентификатор комментария.
+     * @param text Данные для обновления комментария.
+     * @return ответ с обновленным комментарием
+     */
     @Operation(
             summary = "Обновление комментария",
             responses = {

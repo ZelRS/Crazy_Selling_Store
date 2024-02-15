@@ -25,6 +25,9 @@ import java.io.IOException;
 
 import static org.springframework.http.MediaType.*;
 
+/**
+ * Контроллер для работы с объявлениями.
+ */
 @RestController
 @Slf4j
 @RequiredArgsConstructor
@@ -32,8 +35,15 @@ import static org.springframework.http.MediaType.*;
 @RequestMapping("/ads")
 @Tag(name = "Объявления")
 public class AdController {
+    /**
+     * Сервис для работы с объявлениями.
+     */
     private final AdServiceImpl adService;
 
+    /**
+     * Получение всех объявлений.
+     * @return ResponseEntity содержит список всех объявлений.
+     */
     @Operation(
             summary = "Получение всех объявлений",
             responses = {
@@ -46,10 +56,18 @@ public class AdController {
                                             implementation = Ads.class)))})
     @GetMapping(produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Ads> getAllAds() {
+        // Логирование получения всех объявлений
         log.info("Получен список всех объявлений");
         return ResponseEntity.ok(adService.getAllAds());
     }
-
+    /**
+     * Создание нового объявления.
+     * @param properties Параметры нового объявления.
+     * @param image Картинка объявления.
+     * @param authentication Данные авторизации пользователя.
+     * @return ResponseEntity содержит новое объявление или код статуса ответа при неудаче (
+     * HttpStatus.UNPROCESSABLE_ENTITY).
+     */
     @Operation(
             summary = "Добавление объявления",
             responses = {
@@ -78,7 +96,11 @@ public class AdController {
         return ResponseEntity.status(HttpStatus.CREATED).body(ad);
 
     }
-
+    /**
+     * Получение расширенной информации объявления.
+     * @param id Идентификатор объявления.
+     * @return ResponseEntity содержит расширенный набор параметров объявления.
+     */
     @Operation(
             summary = "Получение информации об объявлении",
             responses = {
@@ -107,7 +129,12 @@ public class AdController {
                 "\" успешно получена (Пользователь: " + authentication.getName() + ")");
         return ResponseEntity.ok(extendedAd);
     }
-
+    /**
+     * Удаление объявления.
+     * @param id Идентификатор удаляемого объявления.
+     * @return ResponseEntity содержит код статуса ответа (
+     * HttpStatus.NO_CONTENT при успешном удалении, HttpStatus.NOT_FOUND при неудачном удалении).
+     */
     @Operation(
             summary = "Удаление объявления",
             responses = {
@@ -135,7 +162,12 @@ public class AdController {
         log.info("Объявление успешно удалено");
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
-
+    /**
+     * Обновление информации объявления.
+     * @param id Идентификатор объявления.
+     * @param createOrUpdateAd Обновленная версия объявления.
+     * @return ResponseEntity содержит измененное объявление.
+     */
     @Operation(
             summary = "Обновление информации об объявлении",
             responses = {
@@ -166,7 +198,11 @@ public class AdController {
         log.info("Информация объявления \"" + createOrUpdateAd.getTitle() + "\" успешно обновлена");
         return ResponseEntity.ok(ad);
     }
-
+    /**
+     * Получение объявлений авторизованного пользователя.
+     * @param authentication Данные авторизации пользователя.
+     * @return ResponseEntity содержит список объявлений пользователя.
+     */
     @Operation(
             summary = "Получение объявлений авторизованного пользователя",
             responses = {
@@ -186,7 +222,13 @@ public class AdController {
         return ResponseEntity.ok(adService.getAuthUserAds(authentication));
 
     }
-
+    /**
+     * Обновление картинки объявления.
+     * @param id Идентификатор объявления, к которому относится картинка.
+     * @param image Новая картинка объявления.
+     * @return ResponseEntity содержит новую картинку объявления или код статуса ответа при неудаче (
+     * HttpStatus.NOT_FOUND).
+     */
     @Operation(
             summary = "Обновление картинки объявления",
             responses = {

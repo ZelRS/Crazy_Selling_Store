@@ -22,7 +22,9 @@ import java.util.Objects;
 
 import static crazy_selling_store.mapper.UserMapper.INSTANCE;
 
-//сервисный класс для обработки пользователей
+/**
+ * Сервисный класс для обработки пользователей.
+ */
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -31,92 +33,103 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder encoder;
     private final UploadImageService uploadImageService;
 
-    @Transactional
-    @Override
+    /**
+     * Устанавливает новый пароль пользователю.
+     *
+     * @param newPassword     объект с новым паролем
+     * @param authentication  объект аутентификации пользователя
+     * @return true, если пароль успешно установлен, иначе false
+     */
     public boolean setPassword(NewPassword newPassword, Authentication authentication) {
         UserEntity userEntity;
         try {
             userEntity = repository.findUserByEmail(authentication.getName())
                     .orElseThrow(() -> new UsernameNotFoundException("Пользователь не зарегистрирован"));
         } catch (UsernameNotFoundException e) {
-            //если такого пользователя нет, ловим исключение и возвращаем из метода false
+            // Если такого пользователя нет, ловим исключение и возвращаем из метода false
             log.info("Пользователь не зарегистрирован");
             return false;
         }
-        //сеттим в сущность хэшированный пароль
+
         userEntity.setPassword(encoder.encode(newPassword.getNewPassword()));
-        //сохраняем пользователя в БД
         repository.save(userEntity);
         return true;
     }
 
-    @Override
+    /**
+     * Получает информацию о пользователе.
+     *
+     * @param authentication  объект аутентификации пользователя
+     * @return DTO пользователя или null, если пользователь не найден
+     */
     public User getUserInformation(Authentication authentication) {
         UserEntity userEntity;
         try {
             userEntity = repository.findUserByEmail(authentication.getName())
                     .orElseThrow(() -> new UsernameNotFoundException("Пользователь не зарегистрирован"));
         } catch (UsernameNotFoundException e) {
-            //если такого пользователя нет, ловим исключение и возвращаем из метода null
             log.info("Пользователь не зарегистрирован");
             return null;
         }
-        //возвращаем из метода DTO пользователя, образованного от сущности
+
         return INSTANCE.toDTOUser(userEntity);
     }
 
-    @Transactional
-    @Override
+    /**
+     * Обновляет информацию о пользователе.
+     *
+     * @param updateUser       объект с обновленными данными пользователя
+     * @param authentication   объект аутентификации пользователя
+     * @return объект с обновленной информацией о пользователе или null, если пользователь не найден
+     */
     public UpdateUser updateUserInfo(UpdateUser updateUser, Authentication authentication) {
         UserEntity userEntity;
         try {
             userEntity = repository.findUserByEmail(authentication.getName())
                     .orElseThrow(() -> new UsernameNotFoundException("Пользователь не зарегистрирован"));
         } catch (UsernameNotFoundException e) {
-            //если такого пользователя нет, ловим исключение и возвращаем из метода null
             log.info("Пользователь не зарегистрирован");
             return null;
         }
-        //сеттим в сущность необходимые поля из DTO
+
         userEntity.setFirstName(updateUser.getFirstName());
         userEntity.setLastName(updateUser.getLastName());
         userEntity.setPhone(updateUser.getPhone());
-        //сохраняем пользователя в БД
         repository.save(userEntity);
         return updateUser;
     }
 
-    @Transactional
-    @Override
+    /**
+     * Обновляет аватар пользователя.
+     *
+     * @param image            объект с изображением аватара
+     * @param authentication   объект аутентификации пользователя
+     * @return true, если аватар успешно обновлен, иначе false
+     * @throws IOException      если произошла ошибка ввода-вывода
+     */
     public boolean updateUserAvatar(MultipartFile image, Authentication authentication) throws IOException {
         UserEntity userEntity;
         try {
             userEntity = repository.findUserByEmail(authentication.getName())
                     .orElseThrow(() -> new UsernameNotFoundException("Пользователь не зарегистрирован"));
         } catch (UsernameNotFoundException e) {
-            //если такого пользователя нет, ловим исключение и возвращаем из метода false
             log.info("Пользователь не зарегистрирован");
             return false;
-
         }
-        //формируем строку с путем для хранения аватаров
+
         String imageDir = "src/main/resources/userAvatars/";
-        //формируем строку с оригинальным названием файла
         String origFilename = image.getOriginalFilename();
-        //проверяем строку на null
+
         assert origFilename != null;
-        //формируем строку с названием сохраненного файла на сервере
+
         String savedFileName = userEntity.getEmail() + "." +
-                Objects.requireNonNull(origFilename.substring(origFilename.lastIndexOf(".") + 1));
-        //формируем путь
+                               Objects.requireNonNull(origFilename.substring(origFilename.lastIndexOf(".") + 1));
+
         Path filePath = Path.of(imageDir, savedFileName);
-        //создаем директорию на сервере
         Files.createDirectories(filePath.getParent());
-        //загружаем фото по указанному пути на сервер
         uploadImageService.uploadImage(image, filePath);
-        //сеттим URL аватара в сущность
+
         userEntity.setImage("/" + imageDir + savedFileName);
-        //сохраняем пользователя в БД
         repository.save(userEntity);
         return true;
     }

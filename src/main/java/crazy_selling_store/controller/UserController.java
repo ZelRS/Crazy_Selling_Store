@@ -21,7 +21,9 @@ import java.io.IOException;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
-
+/**
+ * Контроллер для работы с пользователями.
+ */
 @RestController
 @Slf4j
 @RequiredArgsConstructor
@@ -30,7 +32,13 @@ import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 @Tag(name = "Пользователи")
 public class UserController {
     private final UserServiceImpl userService;
-
+    /**
+     * Обновляет пароль пользователя.
+     *
+     * @param newPassword Новый пароль пользователя.
+     * @param authentication Данные авторизации пользователя.
+     * @return ответ с кодом состояния в зависимости от результата обновления пароля.
+     */
     @Operation(
             summary = "Обновление пароля",
             responses = {
@@ -61,7 +69,12 @@ public class UserController {
         log.info("Пароль успешно изменен (Пользователь: " + authentication.getName() + ")");
         return ResponseEntity.status(HttpStatus.OK).build();
     }
-
+    /**
+     * Получает информацию об авторизованном пользователе.
+     *
+     * @param authentication Данные авторизации пользователя.
+     * @return ответ с информацией об авторизованном пользователе.
+     */
     @Operation(
             summary = "Получение информации об авторизированном пользователе",
             responses = {
@@ -86,7 +99,13 @@ public class UserController {
         log.info("Информация о пользователе успешно получена (Пользователь: " + authentication.getName() + ")");
         return ResponseEntity.ok(userInfo);
     }
-
+    /**
+     * Обновляет информацию об авторизованном пользователе.
+     *
+     * @param updateUser Данные для обновления пользователя.
+     * @param authentication Данные авторизации пользователя.
+     * @return ответ с обновленной информацией об авторизованном пользователе.
+     */
     @Operation(
             summary = "Обновление информации об авторизованном пользователе",
             responses = {
@@ -112,7 +131,13 @@ public class UserController {
         log.info("Информация о пользователе успешно обновлена (Пользователь: " + authentication.getName() + ")");
         return ResponseEntity.ok(updatedUserInfo);
     }
-
+    /**
+     * Обновляет картинку пользователя.
+     *
+     * @param image Новая картинка пользователя.
+     * @param authentication Данные авторизации пользователя.
+     * @return ответ с новым путем к картинке пользователя.
+     */
     @Operation(
             summary = "Обновление аватара авторизованного пользователя",
             responses = {

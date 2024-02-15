@@ -24,15 +24,24 @@ import java.util.List;
 
 import static crazy_selling_store.mapper.CommentMapper.INSTANCE;
 
-//сервисный класс для обработки комментариев
+/**
+ * Сервисный класс для обработки комментариев.
+ */
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
+
     private final AdRepository adRepository;
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
 
+    /**
+     * Получает комментарии к объявлению.
+     *
+     * @param id идентификатор объявления
+     * @return объект с количеством и списком комментариев
+     */
     @Override
     public Comments getAdComments(Integer id) {
         //получаем сущность объявления из БД по id

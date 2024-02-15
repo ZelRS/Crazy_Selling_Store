@@ -26,78 +26,115 @@ import java.util.Objects;
 
 import static crazy_selling_store.mapper.AdMapper.INSTANCE;
 
-//сервисный класс для обработки объявлений
+/**
+ * Сервисный класс для обработки объявлений.
+ */
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class AdServiceImpl implements AdService {
+
     private final AdRepository adRepository;
     private final UserRepository userRepository;
     private final UploadImageService uploadImageService;
 
-    @Transactional
+    /**
+     * Создает новое объявление.
+     *
+     * @param properties     DTO с данными объявления.
+     * @param image          Изображение объявления.
+     * @param authentication Аутентификация пользователя.
+     * @return Созданное объявление.
+     * @throws IOException Ошибка при загрузке изображения.
+     */
     @Override
     public Ad createAd(CreateOrUpdateAd properties,
                        MultipartFile image,
                        Authentication authentication) throws IOException {
-        //получаем сущность из DTO
+        // Получаем сущность из DTO.
         AdEntity adEntity = INSTANCE.toEntityAd(properties);
-        //получаем зарегистрированного пользователя по email
+
+        // Получаем зарегистрированного пользователя по email.
         UserEntity userEntity = null;
         try {
             if (authentication != null) {
                 userEntity = userRepository.findUserByEmail(authentication.getName())
                         .orElseThrow(() -> new UsernameNotFoundException("Пользователь не зарегистрирован"));
             } else {
-                //если пользователь оказался не зарегистрированным возвращаем из метода null
+                // Если пользователь оказался не зарегистрированным, возвращаем из метода null.
                 return null;
             }
         } catch (UsernameNotFoundException e) {
             log.info("Пользователь не зарегистрирован");
         }
-        //добавляем пользователя к объявлению
+
+        // Добавляем пользователя к объявлению.
         adEntity.setUser(userEntity);
-        //первично сохраняем объфвление в БД для формирования id
+
+        // Первично сохраняем объявление в БД для формирования id.
         adRepository.save(adEntity);
-        //формируем строку с путем для хранения фото
+
+        // Формируем строку с путем для хранения фото.
         String imageDir = "src/main/resources/adImages/";
-        //формируем строку с оригинальным названием фото
+
+        // Формируем строку с оригинальным названием фото.
         String origFilename = image.getOriginalFilename();
-        //проверяем строку на null
+
+        // Проверяем строку на null.
         assert origFilename != null;
-        //формируем строку с названием сохраненного файла на сервере
+
+        // Формируем строку с названием сохраненного файла на сервере.
         String imageFinishName = adEntity.getPk() + "." +
-                Objects.requireNonNull(origFilename.substring(origFilename.lastIndexOf(".") + 1));
-        //формируем путь
+                                 Objects.requireNonNull(origFilename.substring(origFilename.lastIndexOf(".") + 1));
+
+        // Формируем путь.
         Path filePath = Path.of(imageDir, imageFinishName);
-        //создаем директорию на сервере
+
+        // Создаем директорию на сервере.
         Files.createDirectories(filePath.getParent());
-        // загрузка фото по указанному пути
+
+        // Загрузка фото по указанному пути.
         uploadImageService.uploadImage(image, filePath);
-        // сохраняем URL фотографии в таблицу объявления
+
+        // Сохраняем URL фотографии в таблицу объявления.
         adEntity.setImage("/" + imageDir + imageFinishName);
-        //повторно сохраняем объвление в БД для сеттинга фото
+
+        // Повторно сохраняем объявление в БД для сеттинга фото.
         adRepository.save(adEntity);
-        //преобразуем сформированные сущности пользователя и объявления в DTO и возвращаем его в метод контроллера
+
+        // Преобразуем сформированные сущности пользователя и объявления в DTO и возвращаем его в метод контроллера.
         return INSTANCE.toDTOAd(adEntity.getUser(), adEntity);
     }
 
+    /**
+     * Возвращает все объявления.
+     *
+     * @return Список объявлений.
+     */
     @Override
     public Ads getAllAds() {
-        //формируем список DTO объявлений
+        // Формируем список DTO объявлений.
         List<Ad> adsList = new ArrayList<>();
-        // проходим по списку сущностей объявления, полученному из БД и преобразуем каждое объявление в DTO
+
+        // Проходим по списку сущностей объявления, полученному из БД, и преобразуем каждое объявление в DTO.
         for (AdEntity ad : adRepository.findAll()) {
             adsList.add(INSTANCE.toDTOAd(ad.getUser(), ad));
         }
-        //формируем возвращаем в метод контроллера DTO списка объявлений и их количества(Ads)
+
+        // Формируем возвращаем в метод контроллера DTO списка объявлений и их количества(Ads).
         return new Ads(adsList.size(), adsList);
     }
 
-    @Transactional
+    /**
+     * Возвращает объявления авторизованного пользователя.
+     *
+     * @param authentication Аутентификация пользователя.
+     * @return Список объявлений.
+     */
+
     @Override
     public Ads getAuthUserAds(Authentication authentication) {
-        //получаем зарегистрированного пользователя по email
+        // Получаем зарегистрированного пользователя по email.
         UserEntity userEntity = null;
         try {
             userEntity = userRepository.findUserByEmail(authentication.getName())
@@ -105,78 +142,122 @@ public class AdServiceImpl implements AdService {
         } catch (UsernameNotFoundException e) {
             log.info("Пользователь не зарегистрирован");
         }
-        //формируем список DTO объявлений
+
+        // Формируем список DTO объявлений.
         List<Ad> adsList = new ArrayList<>();
-        // проходим по списку сущностей объявления, полученному из БД по пользователю и преобразуем каждое объявление в DTO
+
+        // Проходим по списку сущностей объявления, полученному из БД по пользователю, и преобразуем каждое объявление в DTO.
         for (AdEntity ad : adRepository.findByUser(userEntity)) {
             adsList.add(INSTANCE.toDTOAd(ad.getUser(), ad));
         }
-        //формируем возвращаем в метод контроллера DTO списка объявлений и их количества(Ads)
+
+        // Формируем возвращаем в метод контроллера DTO списка объявлений и их количества(Ads).
         return new Ads(adsList.size(), adsList);
     }
 
+    /**
+     * Возвращает полную информацию об объявлении.
+     *
+     * @param id Идентификатор объявления.
+     * @return Полная информация об объявлении.
+     */
     @Override
     public ExtendedAd getAdFullInfo(Integer id) {
-        //получаем сущность из БД по id
+        // Получаем сущность из БД по id.
         AdEntity ad = adRepository.getAdByPk(id);
         if (ad == null) {
-            //если сущность равна null, возвращаем из метода null
+            // Если сущность равна null, возвращаем из метода null.
             return null;
         }
-        //получаем пользователя из объявления
+
+        // Получаем пользователя из объявления.
         UserEntity user = ad.getUser();
-        //формируем возвращаем в метод контроллера DTO расширенного просмотра объявления
+
+        // Формируем возвращаем в метод контроллера DTO расширенного просмотра объявления.
         return INSTANCE.toDTOExtendedAd(user, ad);
     }
 
-    @Transactional
+    /**
+     * Удаляет объявление.
+     *
+     * @param id Идентификатор объявления.
+     * @throws IOException Ошибка при удалении изображения.
+     */
+
     @Override
     public void deleteAd(Integer id) throws IOException {
-        //получаем сущность из БД по id
+        // Получаем сущность из БД по id.
         AdEntity ad = adRepository.getAdByPk(id);
-        //получаем URL фото из БД
+
+        // Получаем URL фото из БД.
         String startURL = ad.getImage();
-        //с помощью билдера удаляем первый слэш в URL
+
+        // С помощью билдера удаляем первый слэш в URL.
         StringBuilder sb = new StringBuilder(startURL);
         if (sb.length() > 0) {
             sb.deleteCharAt(0);
         }
-        //формируем корректный путь
+
+        // Формируем корректный путь.
         Path path = Path.of(sb.toString());
-        //удаляем фото с сервера по этому пути
+
+        // Удаляем фото с сервера по этому пути.
         Files.delete(path);
-        //удаляем объявление из БД
+
+        // Удаляем объявление из БД.
         adRepository.deleteByPk(id);
     }
 
-    @Transactional
+    /**
+     * Обновляет информацию об объявлении.
+     *
+     * @param id               Идентификатор объявления.
+     * @param createOrUpdateAd DTO с данными объявления.
+     * @return Обновленное объявление.
+     */
+
     @Override
     public Ad updateAdInfo(Integer id, CreateOrUpdateAd createOrUpdateAd) {
-        //получаем сущность из БД по id
+        // Получаем сущность из БД по id.
         AdEntity ad = adRepository.getAdByPk(id);
-        // сеттим в сущность необходимые поля из DTO CreateOrUpdateAd
+
+        // Сеттим в сущность необходимые поля из DTO CreateOrUpdateAd.
         ad.setTitle(createOrUpdateAd.getTitle());
         ad.setPrice(createOrUpdateAd.getPrice());
         ad.setDescription(createOrUpdateAd.getDescription());
-        //сохраняем сущность в БД
+
+        // Сохраняем сущность в БД.
         adRepository.save(ad);
-        //формируем возвращаем в метод контроллера DTO объявления
+
+        // Формируем возвращаем в метод контроллера DTO объявления.
         return INSTANCE.toDTOAd(ad.getUser(), ad);
     }
 
+    /**
+     * Обновляет фото объявления.
+     *
+     * @param id    Идентификатор объявления.
+     * @param image Новое фото объявления.
+     * @return Массив байт нового фото.
+     * @throws IOException Ошибка при обновлении фото.
+     */
     @Override
     public byte[] updateAdPhoto(Integer id, MultipartFile image) throws IOException {
-        //получаем сущность из БД по id
+        // Получаем сущность из БД по id.
         AdEntity ad = adRepository.getAdByPk(id);
-        //получаем URL фото из БД
+
+        // Получаем URL фото из БД.
         String startURL = ad.getImage();
-        //с помощью билдера удаляем первый слэш в URL
+
+        // С помощью билдера удаляем первый слэш в URL.
         StringBuilder sb = new StringBuilder(startURL);
         if (sb.length() > 0) {
             sb.deleteCharAt(0);
         }
-        //формируем корректный путь
+
+        // Формируем корректный путь.
         Path path = Path.of(sb.toString());
+
         // загрузка фото по указанному пути
         uploadImageService.uploadImage(image, path);
         //считываем массив байт фотографии и возвращаем его в метод контроллера
