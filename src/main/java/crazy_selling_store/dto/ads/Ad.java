@@ -2,7 +2,9 @@ package crazy_selling_store.dto.ads;
 
 import lombok.Data;
 
-//DTO объявления
+/**
+ * DTO объявления
+ */
 @Data
 public class Ad {
     private Integer author;

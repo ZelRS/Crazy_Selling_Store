@@ -32,7 +32,9 @@ build/
 ### VS Code ###
 .vscode/
 /src/main/resources/application-ZelRS.properties
+/src/main/resources/application-petyuri.properties
 /src/main/resources/application-adhoc.properties
 /src/main/resources/application-myUser.properties
 /src/main/resources/adImages/
 /src/main/resources/userAvatars/
+/src/main/resources/META-INF/MANIFEST.MF

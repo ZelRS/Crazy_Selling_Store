@@ -12,16 +12,28 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-//сервисный класс для обработки авторизации и входа пользователя
+/**
+ * Сервисный класс для обработки авторизации и входа пользователя.
+ */
 @Slf4j
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
+
     private final PasswordEncoder encoder;
     private final SpecialUserDetailsService manager;
     private final UserRepository repository;
 
+    /**
+     * Проверяет вход пользователя.
+     *
+     * @param userName имя пользователя
+     * @param password пароль пользователя
+     * @return true, если вход успешный, false в противном случае
+     */
     @Override
     public boolean login(String userName, String password) {
         UserDetails userDetails;
@@ -32,12 +44,18 @@ public class AuthServiceImpl implements AuthService {
             return false;
         }
         if (!encoder.matches(password, userDetails.getPassword())) {
-            log.info("Введен не верный пароль (Пользователь: " + userName + ")");
+            log.info("Введен неверный пароль (Пользователь: " + userName + ")");
             return false;
         }
         return true;
     }
 
+    /**
+     * Регистрирует нового пользователя.
+     *
+     * @param register данные нового пользователя
+     * @return true, если регистрация успешная, false если пользователь уже зарегистрирован
+     */
     @Override
     public boolean register(Register register) {
         try {

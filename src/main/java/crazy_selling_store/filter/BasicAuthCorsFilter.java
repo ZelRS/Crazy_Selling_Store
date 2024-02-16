@@ -10,9 +10,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-//класс, реализующий фильтр, который обрабатывает CORS (Cross-Origin Resource Sharing) и добавляет
-//заголовок "Access-Control-Allow-Credentials" в ответ. Заголовок указывает, что браузер должен включить
-//отправку кросс-доменных запросов с учетными данными (credentials), такими как куки или HTTP-авторизация
+/**
+ * Класс, реализующий фильтр, который обрабатывает CORS (Cross-Origin Resource Sharing) и добавляет
+ * заголовок "Access-Control-Allow-Credentials" в ответ.
+ * Заголовок указывает, что браузер должен включить отправку кросс-доменных запросов с учетными данными (credentials),
+ * такими как куки или HTTP-авторизация
+ */
 @Component
 public class BasicAuthCorsFilter extends OncePerRequestFilter {
 
