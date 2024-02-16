@@ -4,7 +4,9 @@ import lombok.Data;
 
 import javax.validation.constraints.Size;
 
-//DTO для изменения пароля пользователя
+/**
+ * DTO для изменения пароля пользователя
+ */
 @Data
 public class NewPassword {
     @Size(min = 8, max = 16)

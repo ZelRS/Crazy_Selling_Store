@@ -9,14 +9,23 @@ import java.nio.file.Path;
 
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
-//класс загрузки фото
+/**
+ * Класс для загрузки изображений.
+ */
 @Service
 public class UploadImageService {
-    //метод загрузки фото по указанному пути на сервер
+
+    /**
+     * Метод загрузки изображения по указанному пути на сервер.
+     *
+     * @param image изображение для загрузки
+     * @param path  путь для сохранения изображения
+     * @throws IOException если происходит ошибка ввода-вывода при загрузке изображения
+     */
     public void uploadImage(MultipartFile image, Path path) throws IOException {
-        //если фото по этому пути с таким именем уже существует, то оно удаляется
+        // Если изображение по указанному пути с таким именем уже существует, оно удаляется
         Files.deleteIfExists(path);
-        //try с ресурсами с буферизацией загружает фото по заданному пути и автоматически закрывает потоки
+        // Try с ресурсами и буферизацией загружает изображение по заданному пути и автоматически закрывает потоки
         try (InputStream is = image.getInputStream();
              OutputStream os = Files.newOutputStream(path, CREATE_NEW);
              BufferedInputStream bis = new BufferedInputStream(is, 1024);

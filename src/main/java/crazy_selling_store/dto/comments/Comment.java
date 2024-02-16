@@ -2,7 +2,9 @@ package crazy_selling_store.dto.comments;
 
 import lombok.Data;
 
-//DTO комментария
+/**
+ * DTO комментария
+ */
 @Data
 public class Comment {
     private Integer author;

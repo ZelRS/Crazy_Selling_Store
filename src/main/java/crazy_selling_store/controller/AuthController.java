@@ -15,14 +15,21 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
+/**
+ * Контроллер аутентификации и регистрации пользователей.
+ */
 @Slf4j
 @CrossOrigin(value = "http://localhost:3000")
 @RestController
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
-
+    /**
+     * Обрабатывает запрос на вход пользователя в систему.
+     *
+     * @param login данные пользователя для входа.
+     * @return ответ с кодом состояния в зависимости от результата входа.
+     */
     @Operation(
             summary = "Авторизация",
             responses = {
@@ -46,7 +53,12 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
-
+    /**
+     * Обрабатывает запрос на регистрацию нового пользователя.
+     *
+     * @param register данные нового пользователя для регистрации.
+     * @return ответ с кодом состояния в зависимости от результата регистрации.
+     */
     @Operation(
             summary = "Авторизация",
             responses = {
