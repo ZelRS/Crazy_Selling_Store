@@ -20,6 +20,7 @@ public class SpecialUserDetailsService implements UserDetailsService {
      * Загружает пользователя по его имени пользователя (username).
      *
      * @param username имя пользователя
+     *
      * @return пользователя в контексте Spring Security
      * @throws UsernameNotFoundException если пользователь не найден
      */
@@ -28,7 +29,6 @@ public class SpecialUserDetailsService implements UserDetailsService {
         // Находим пользователя в БД по email
         UserEntity user = userRepository.findUserByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User doesn't exists"));
-
         // Загружаем найденного пользователя в контекст Spring Security и возвращаем его
         return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getEmail())

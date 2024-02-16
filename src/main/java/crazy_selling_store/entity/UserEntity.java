@@ -7,7 +7,9 @@ import javax.persistence.*;
 import java.util.List;
 import java.util.Objects;
 
-//сущность объявления для БД
+/**
+ * сущность объявления для БД
+ */
 @Entity(name = "users")
 @NoArgsConstructor
 @Data

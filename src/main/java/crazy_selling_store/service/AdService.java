@@ -5,7 +5,6 @@ import crazy_selling_store.dto.ads.Ads;
 import crazy_selling_store.dto.ads.CreateOrUpdateAd;
 import crazy_selling_store.dto.ads.ExtendedAd;
 import org.springframework.security.core.Authentication;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -63,7 +62,6 @@ public interface AdService {
      * @param createOrUpdateAd  объект с обновленными данными объявления
      * @return обновленное объявление
      */
-    @Transactional
     Ad updateAdInfo(Integer id, CreateOrUpdateAd createOrUpdateAd);
 
     /**

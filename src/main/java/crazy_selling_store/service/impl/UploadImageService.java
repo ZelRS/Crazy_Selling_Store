@@ -1,7 +1,6 @@
 package crazy_selling_store.service.impl;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
@@ -23,12 +22,10 @@ public class UploadImageService {
      * @param path  путь для сохранения изображения
      * @throws IOException если происходит ошибка ввода-вывода при загрузке изображения
      */
-    @Transactional
     public void uploadImage(MultipartFile image, Path path) throws IOException {
         // Если изображение по указанному пути с таким именем уже существует, оно удаляется
         Files.deleteIfExists(path);
-
-        // Try с ресурсами с буферизацией загружает изображение по заданному пути и автоматически закрывает потоки
+        // Try с ресурсами и буферизацией загружает изображение по заданному пути и автоматически закрывает потоки
         try (InputStream is = image.getInputStream();
              OutputStream os = Files.newOutputStream(path, CREATE_NEW);
              BufferedInputStream bis = new BufferedInputStream(is, 1024);

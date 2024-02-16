@@ -5,7 +5,9 @@ import lombok.Data;
 
 import java.util.List;
 
-//DTO списка комментариев
+/**
+ * DTO списка комментариев
+ */
 @Data
 @AllArgsConstructor
 public class Comments {

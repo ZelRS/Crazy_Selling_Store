@@ -9,20 +9,28 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
-//маппер между DTO и сущностью объявления
+/**
+ * Маппер между DTO и сущностью объявления
+ */
 @Mapper(componentModel = "spring")
 public interface AdMapper {
     AdMapper INSTANCE = Mappers.getMapper(AdMapper.class);
 
-    //  происходит маппинг DTO CreateOrUpdate в сущность AdEntity
+    /**
+     * Маппинг @param DTO CreateOrUpdate в сущность @return AdEntity
+     */
     AdEntity toEntityAd(CreateOrUpdateAd dto);
 
-    //  происходит маппинг сущностей UserEntity и AdEntity в DTO Ad
+    /**
+     * Маппинг сущностей UserEntity и AdEntity в DTO Ad
+     */
     @Mapping(source = "user.id", target = "author")
     @Mapping(source = "ad.image", target = "image")
     Ad toDTOAd(UserEntity user, AdEntity ad);
 
-    //  происходит маппинг сущностей UserEntity и AdEntity в DTO  ExtendedAd
+    /**
+     * Маппинг сущностей UserEntity и AdEntity в DTO  ExtendedAd
+     */
     @Mapping(source = "user.firstName", target = "authorFirstName")
     @Mapping(source = "user.lastName", target = "authorLastName")
     @Mapping(source = "ad.image", target = "image")

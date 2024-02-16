@@ -15,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -60,7 +59,15 @@ public class CommentServiceImpl implements CommentService {
         return new Comments(comments.size(), comments);
     }
 
-    @Transactional
+    /**
+     * Создаем комментарий к объявлению.
+     *
+     * @param id идентификатор объявления
+     * @param text DTO создания или обновления комментария
+     * @param authentication параметр для получения имени аутентифицированного пользователя
+     *
+     * @return DTO созданного комментария
+     */
     @Override
     public Comment createAdComment(Integer id, CreateOrUpdateComment text,
                                    Authentication authentication) {
@@ -95,7 +102,15 @@ public class CommentServiceImpl implements CommentService {
         return INSTANCE.toDTOComment(comment.getUser(), comment);
     }
 
-    @Transactional
+    /**
+     * Удаляем комментарий объявления.
+     *
+     * @param adId идентификатор объявления
+     * @param commentId идентификатор комментария
+     *
+     * @return false, если комментарий или объявление не найдено по своему id или объявление комментария не равно
+     * комментарию, найденному по id, иначе возвращаем true
+     */
     @Override
     public boolean deleteAdComment(Integer adId, Integer commentId) {
         //получаем комментария объявления из БД по id
@@ -116,7 +131,15 @@ public class CommentServiceImpl implements CommentService {
         return true;
     }
 
-    @Transactional
+    /**
+     * Изменяем комментарий объявления.
+     *
+     * @param adId идентификатор объявления
+     * @param commentId идентификатор комментария
+     * @param text DTO создания или обновления комментария
+     *
+     * @return DTO созданного комментария
+     */
     @Override
     public Comment updateAdComment(Integer adId, Integer commentId,
                                    CreateOrUpdateComment text) {

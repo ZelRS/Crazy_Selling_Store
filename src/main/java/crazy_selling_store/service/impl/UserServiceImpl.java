@@ -12,7 +12,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -36,10 +35,11 @@ public class UserServiceImpl implements UserService {
     /**
      * Устанавливает новый пароль пользователю.
      *
-     * @param newPassword     объект с новым паролем
-     * @param authentication  объект аутентификации пользователя
+     * @param newPassword    объект с новым паролем
+     * @param authentication объект аутентификации пользователя
      * @return true, если пароль успешно установлен, иначе false
      */
+    @Override
     public boolean setPassword(NewPassword newPassword, Authentication authentication) {
         UserEntity userEntity;
         try {
@@ -50,7 +50,6 @@ public class UserServiceImpl implements UserService {
             log.info("Пользователь не зарегистрирован");
             return false;
         }
-
         userEntity.setPassword(encoder.encode(newPassword.getNewPassword()));
         repository.save(userEntity);
         return true;
@@ -59,9 +58,10 @@ public class UserServiceImpl implements UserService {
     /**
      * Получает информацию о пользователе.
      *
-     * @param authentication  объект аутентификации пользователя
+     * @param authentication объект аутентификации пользователя
      * @return DTO пользователя или null, если пользователь не найден
      */
+    @Override
     public User getUserInformation(Authentication authentication) {
         UserEntity userEntity;
         try {
@@ -78,10 +78,11 @@ public class UserServiceImpl implements UserService {
     /**
      * Обновляет информацию о пользователе.
      *
-     * @param updateUser       объект с обновленными данными пользователя
-     * @param authentication   объект аутентификации пользователя
+     * @param updateUser     объект с обновленными данными пользователя
+     * @param authentication объект аутентификации пользователя
      * @return объект с обновленной информацией о пользователе или null, если пользователь не найден
      */
+    @Override
     public UpdateUser updateUserInfo(UpdateUser updateUser, Authentication authentication) {
         UserEntity userEntity;
         try {
@@ -102,11 +103,12 @@ public class UserServiceImpl implements UserService {
     /**
      * Обновляет аватар пользователя.
      *
-     * @param image            объект с изображением аватара
-     * @param authentication   объект аутентификации пользователя
+     * @param image          объект с изображением аватара
+     * @param authentication объект аутентификации пользователя
      * @return true, если аватар успешно обновлен, иначе false
-     * @throws IOException      если произошла ошибка ввода-вывода
+     * @throws IOException если произошла ошибка ввода-вывода
      */
+    @Override
     public boolean updateUserAvatar(MultipartFile image, Authentication authentication) throws IOException {
         UserEntity userEntity;
         try {
@@ -123,7 +125,7 @@ public class UserServiceImpl implements UserService {
         assert origFilename != null;
 
         String savedFileName = userEntity.getEmail() + "." +
-                               Objects.requireNonNull(origFilename.substring(origFilename.lastIndexOf(".") + 1));
+                Objects.requireNonNull(origFilename.substring(origFilename.lastIndexOf(".") + 1));
 
         Path filePath = Path.of(imageDir, savedFileName);
         Files.createDirectories(filePath.getParent());
